@@ -13,11 +13,18 @@ protocol SWAddEditTableViewControllerDelegate: NSObjectProtocol {
     func didEditRaffle(_ raffle: SWRaffle)
 }
 
-class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
+class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     weak var delegate: SWAddEditTableViewControllerDelegate?
+    
     var raffle: SWRaffle?
-
+    var name: String! = ""
+    var price: String! = ""
+    var stock: String! = ""
+    var maximumLimit: String! = ""
+    var descriptionStr: String! = ""
+    var wallpaperImage: UIImage?
+        
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -25,32 +32,38 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
             self.title = "Add"
         } else {
             self.title = "Edit"
+            name = raffle?.name
+            price = String(raffle!.price)
+            stock = String(raffle!.stock)
+            maximumLimit = String(raffle!.maximumLimit)
+            descriptionStr = raffle!.description
+            wallpaperImage = UIImage.init(data: raffle!.wallpaper)
         }
         
         self.tableView = UITableView.init(frame: self.view.bounds, style: .grouped)
         self.tableView.separatorStyle = .none
 
+        self.viewWillLayoutSubviews()
     }
 
     // MARK: - Pricate Methods
     
     private func check() -> Bool {
-        let nameCell: SWTextFieldTableViewCell? = tableView.cellForRow(at: IndexPath.init(row: 0, section: 0)) as? SWTextFieldTableViewCell
-        let priceCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 1)) as? SWTextFieldTableViewCell
-        let stockCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 2)) as? SWTextFieldTableViewCell
-        let maximumLimitCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 3)) as? SWTextFieldTableViewCell
 
-        if nameCell?.textField.text?.count == 0 {
+        if name?.count == 0 {
             self.showAlert("Please enter a name.")
             return false
-        } else if priceCell?.textField.text?.count == 0 {
+        } else if price?.count == 0 {
             self.showAlert("Please enter a price.")
             return false
-        } else if stockCell?.textField.text?.count == 0 {
+        } else if stock?.count == 0 {
             self.showAlert("Please enter a stock.")
             return false
-        } else if maximumLimitCell?.textField.text?.count == 0 {
+        } else if maximumLimit?.count == 0 {
             self.showAlert("Please enter a maximum limit.")
+            return false
+        } else if wallpaperImage == nil {
+            self.showAlert("Please set a ticket wallpaper.")
             return false
         }
 
@@ -64,26 +77,16 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     private func result() -> SWRaffle {
-        let nameCell: SWTextFieldTableViewCell? = tableView.cellForRow(at: IndexPath.init(row: 0, section: 0)) as? SWTextFieldTableViewCell
-        let priceCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 1)) as? SWTextFieldTableViewCell
-        let stockCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 2)) as? SWTextFieldTableViewCell
-        let maximumLimitCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 3)) as? SWTextFieldTableViewCell
-        let descriptionCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 4)) as? SWTextFieldTableViewCell
-        
-        let name = (nameCell?.textField.text)!
-        let price = Double((priceCell?.textField.text)!)!
-        let stock = Int32((stockCell?.textField.text)!)!
-        let maximumLimit = Int32((maximumLimitCell?.textField.text)!)!
-        let description = (descriptionCell?.textField.text)!
         
         if raffle == nil {
-            raffle = SWRaffle.init(name: name, price: price, stock: stock, maximumLimit: maximumLimit, description: description)
+            raffle = SWRaffle.init(name: name, price: Double(price)!, stock: Int32(stock)!, maximumLimit: Int32(maximumLimit)!, description: descriptionStr, wallpaper: wallpaperImage!.jpegData(compressionQuality: 0)!)
         } else {
             raffle!.name = name
-            raffle!.price = price
-            raffle!.stock = stock
-            raffle!.maximumLimit = maximumLimit
-            raffle!.description = description
+            raffle!.price = Double(price)!
+            raffle!.stock = Int32(stock)!
+            raffle!.maximumLimit = Int32(maximumLimit)!
+            raffle!.description = descriptionStr!
+            raffle!.wallpaper = wallpaperImage!.jpegData(compressionQuality: 0)!
         }
         return raffle!
     }
@@ -130,26 +133,26 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
             case 0:
                 cell!.textField.placeholder = "Ex. Lucy Door Prize"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
-                cell!.textField.text = raffle == nil ? "" : raffle!.name
+                cell!.textField.text = name
             case 1:
                 cell!.textField.placeholder = "0~99999999"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .decimalPad
-                cell!.textField.text = raffle == nil ? "" : String(raffle!.price)
+                cell!.textField.text = price
             case 2:
                 cell!.textField.placeholder = "1~99999999.99"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .numberPad
-                cell!.textField.text = raffle == nil ? "" : String(raffle!.stock)
+                cell!.textField.text = stock
             case 3:
                 cell!.textField.placeholder = "1~99999999"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .numberPad
-                cell!.textField.text = raffle == nil ? "" : String(raffle!.maximumLimit)
+                cell!.textField.text = maximumLimit
             default:
                 cell!.textField.placeholder = "(Optional)"
                 cell!.textField.returnKeyType = UIReturnKeyType.done
-                cell!.textField.text = raffle == nil ? "" : String(raffle!.description)
+                cell!.textField.text = descriptionStr
             }
             
             return cell!
@@ -177,9 +180,10 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
                 if cell == nil {
                     cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 }
+                if raffle != nil {
+                    cell?.wallpaperView.image = UIImage.init(data: raffle!.wallpaper)
+                }
                 
-                cell!.wallpaperView.image = UIImage.init(named: "test")
-
                 return cell!
             }
             
@@ -200,13 +204,18 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
         
         if indexPath.section == 5 {
             if indexPath.row == 0 {
-                print("Take Photo...")
-            } else {
-                print("Choose from Existing")
+                print("Camera")
+            } else if (indexPath.row == 1) {
+                let pickerCamera = UIImagePickerController()
+                
+                pickerCamera.allowsEditing = true
+                pickerCamera.sourceType = .photoLibrary
+                pickerCamera.delegate = self
+                
+                self.present(pickerCamera, animated: true, completion: nil)
             }
         } else if indexPath.section == 6 {
             if self.check() == true {
-
                 self.navigationController?.popViewController(animated: true)
                 if raffle == nil {
                     self.delegate?.didAddRaffle(self.result())
@@ -283,5 +292,40 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate {
         }
 
         return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        let cell = textField.superview!.superview as! SWTextFieldTableViewCell
+        let section = tableView.indexPath(for: cell)?.section
+        
+        switch section {
+        case 0:
+            name = textField.text
+        case 1:
+            price = textField.text
+        case 2:
+            stock = textField.text
+        case 3:
+            maximumLimit = textField.text
+        default:
+            descriptionStr = textField.text
+        }
+    }
+    
+    //MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                
+        var imagePicker = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        
+        if picker.allowsEditing {
+            imagePicker = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage)!
+        }
+
+        let cell: SWWallpaperTableViewCell? = tableView.cellForRow(at: IndexPath.init(row: 2, section: 5)) as? SWWallpaperTableViewCell
+        cell?.wallpaperView.image = imagePicker
+        wallpaperImage = imagePicker
+        
+        self.dismiss(animated: true, completion: nil)
     }
 }

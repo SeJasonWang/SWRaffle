@@ -15,4 +15,5 @@ public struct SWRaffle {
     var stock:Int32
     var maximumLimit:Int32
     var description:String
+    var wallpaper:Data
 }

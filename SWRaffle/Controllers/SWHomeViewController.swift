@@ -27,7 +27,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         self.tableView.separatorStyle = .none
         
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-        raffles = database.selectAllRaffles()        
+        raffles = database.selectAllRaffles()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,12 +46,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         AddViewController.delegate = self
         self.navigationController!.pushViewController(AddViewController, animated: true)
     }
-    
-    // MARK: - Public Methods
-    public func updateTableView() {
-        self.tableView.reloadData()
-    }
-    
+        
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -77,8 +72,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         cell!.nameLabel.text = raffle.name
         cell!.priceLabel.text = raffle.price > 0 ? "$" + String(raffle.price) : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
-        cell!.wallpaperView.image = UIImage.init(named: "test")
-        
+        cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaper)
+
         return cell!
     }
     
@@ -124,9 +119,11 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         raffles.insert(raffle, at: 0)
         
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-        database.insert(raffle: SWRaffle(name:raffle.name, price:raffle.price, stock:raffle.stock, maximumLimit:raffle.maximumLimit, description:raffle.description))
+        database.insert(raffle: SWRaffle(name:raffle.name, price:raffle.price, stock:raffle.stock, maximumLimit:raffle.maximumLimit, description:raffle.description, wallpaper:raffle.wallpaper))
         
-        isReadyToInsert = true
+        if raffles.count != 1 {
+            isReadyToInsert = true
+        }
     }
     
     func didEditRaffle(_ raffle: SWRaffle) {

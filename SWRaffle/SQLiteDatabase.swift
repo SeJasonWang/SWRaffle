@@ -300,7 +300,8 @@ class SQLiteDatabase
                 Price INTEGER,
                 Stock INTEGER,
                 MaximumLimit INTEGER,
-                Description CHAR(255)
+                Description CHAR(255),
+                Wallpaper MEDIUMTEXT
             );
             """
         
@@ -308,33 +309,36 @@ class SQLiteDatabase
     }
     
     func insert(raffle:SWRaffle) {
-        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumLimit, Description) VALUES (?, ?, ?, ?, ?)"
+        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumLimit, Description, Wallpaper) VALUES (?, ?, ?, ?, ?, ?)"
         insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
             sqlite3_bind_text(insertStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(insertStatement, 2, raffle.price)
             sqlite3_bind_int(insertStatement, 3, raffle.stock)
             sqlite3_bind_int(insertStatement, 4, raffle.maximumLimit)
             sqlite3_bind_text(insertStatement, 5, NSString(string:raffle.description).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, 6, NSString(string:raffle.wallpaper.base64EncodedString()).utf8String, -1, nil)
         })
     }
     
     func update(raffle:SWRaffle) {
-        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumLimit = ?, description = ? WHERE id = ?"
+        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumLimit = ?, description = ?, wallpaper = ? WHERE id = ?"
         updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
             sqlite3_bind_text(updateStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(updateStatement, 2, raffle.price)
             sqlite3_bind_int(updateStatement, 3, raffle.stock)
             sqlite3_bind_int(updateStatement, 4, raffle.maximumLimit)
             sqlite3_bind_text(updateStatement, 5, NSString(string:raffle.description).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 6, raffle.ID)
+            sqlite3_bind_text(updateStatement, 6, NSString(string:raffle.wallpaper.base64EncodedString()).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 7, raffle.ID)
         })
     }
     
     func selectAllRaffles() -> [SWRaffle] {
         var result = [SWRaffle]()
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumLimit, description FROM Raffle"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumLimit, description, wallpaper FROM Raffle"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            
             //create a raffle object from each result
             let raffle = SWRaffle(
                 ID: sqlite3_column_int(row, 0),
@@ -342,7 +346,8 @@ class SQLiteDatabase
                 price: sqlite3_column_double(row, 2),
                 stock: sqlite3_column_int(row, 3),
                 maximumLimit: sqlite3_column_int(row, 4),
-                description: String(cString:sqlite3_column_text(row, 5))
+                description: String(cString:sqlite3_column_text(row, 5)),
+                wallpaper: Data(base64Encoded: String(cString:sqlite3_column_text(row, 6)), options: .ignoreUnknownCharacters)!
                 )
             //add it to the result array
             result.insert(raffle, at: 0)
@@ -352,7 +357,7 @@ class SQLiteDatabase
     
     func selectRaffleBy(id:Int32) -> SWRaffle? {
         var result : SWRaffle?
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumLimit, description FROM Raffle WHERE id = ?"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumLimit, description, wallpaper FROM Raffle WHERE id = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
 //            if sqlite3_column_int(row, 0) == id {
@@ -362,7 +367,8 @@ class SQLiteDatabase
                     price: sqlite3_column_double(row, 2),
                     stock: sqlite3_column_int(row, 3),
                     maximumLimit: sqlite3_column_int(row, 4),
-                    description: String(cString:sqlite3_column_text(row, 5))
+                    description: String(cString:sqlite3_column_text(row, 5)),
+                    wallpaper: Data(base64Encoded: String(cString:sqlite3_column_text(row, 6)), options: .ignoreUnknownCharacters)!
                 )
 //            }
         }, bindingFunction: { (selectStatement) in
