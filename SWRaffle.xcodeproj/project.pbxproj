@@ -8,22 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		96065BF824481CAF00E2AF13 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96065BF724481CAF00E2AF13 /* AppDelegate.swift */; };
-		96065BFA24481CAF00E2AF13 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96065BF924481CAF00E2AF13 /* SceneDelegate.swift */; };
-		96065BFC24481CAF00E2AF13 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96065BFB24481CAF00E2AF13 /* ViewController.swift */; };
-		96065BFF24481CAF00E2AF13 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96065BFD24481CAF00E2AF13 /* Main.storyboard */; };
 		96065C0124481CB200E2AF13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0024481CB200E2AF13 /* Assets.xcassets */; };
 		96065C0424481CB200E2AF13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0224481CB200E2AF13 /* LaunchScreen.storyboard */; };
+		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
+		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
+		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
+		96A2C85E2449EAC000F09F5E /* SWAddEditTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */; };
+		96A2C8622449FBDE00F09F5E /* SWTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A2C8612449FBDE00F09F5E /* SWTitleView.swift */; };
+		96A2C864244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A2C863244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift */; };
+		96A2C866244AC7E200F09F5E /* SWButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A2C865244AC7E200F09F5E /* SWButtonTableViewCell.swift */; };
+		96A2C868244AC92100F09F5E /* SWWallpaperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A2C867244AC92000F09F5E /* SWWallpaperTableViewCell.swift */; };
+		96D474982448490F00085692 /* SWTicket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D474972448490F00085692 /* SWTicket.swift */; };
+		96D4749A2448491800085692 /* SWCustomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D474992448491800085692 /* SWCustomer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		96065BF424481CAF00E2AF13 /* SWRaffle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SWRaffle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96065BF724481CAF00E2AF13 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		96065BF924481CAF00E2AF13 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		96065BFB24481CAF00E2AF13 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		96065BFE24481CAF00E2AF13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		96065C0024481CB200E2AF13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		96065C0324481CB200E2AF13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		96065C0524481CB300E2AF13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
+		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
+		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
+		96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWAddEditTableViewController.swift; sourceTree = "<group>"; };
+		96A2C8612449FBDE00F09F5E /* SWTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWTitleView.swift; sourceTree = "<group>"; };
+		96A2C863244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWTextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		96A2C865244AC7E200F09F5E /* SWButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWButtonTableViewCell.swift; sourceTree = "<group>"; };
+		96A2C867244AC92000F09F5E /* SWWallpaperTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWWallpaperTableViewCell.swift; sourceTree = "<group>"; };
+		96D474972448490F00085692 /* SWTicket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWTicket.swift; sourceTree = "<group>"; };
+		96D474992448491800085692 /* SWCustomer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWCustomer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +70,46 @@
 		96065BF624481CAF00E2AF13 /* SWRaffle */ = {
 			isa = PBXGroup;
 			children = (
+				965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */,
+				965A54EE244827F1001F3CD5 /* Models */,
+				965A54EF244827F1001F3CD5 /* Views */,
+				965A54EB244827C0001F3CD5 /* Controllers */,
 				96065BF724481CAF00E2AF13 /* AppDelegate.swift */,
-				96065BF924481CAF00E2AF13 /* SceneDelegate.swift */,
-				96065BFB24481CAF00E2AF13 /* ViewController.swift */,
-				96065BFD24481CAF00E2AF13 /* Main.storyboard */,
 				96065C0024481CB200E2AF13 /* Assets.xcassets */,
 				96065C0224481CB200E2AF13 /* LaunchScreen.storyboard */,
 				96065C0524481CB300E2AF13 /* Info.plist */,
 			);
 			path = SWRaffle;
+			sourceTree = "<group>";
+		};
+		965A54EB244827C0001F3CD5 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */,
+				96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		965A54EE244827F1001F3CD5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				965A54F624483ED5001F3CD5 /* SWRaffle.swift */,
+				96D474972448490F00085692 /* SWTicket.swift */,
+				96D474992448491800085692 /* SWCustomer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		965A54EF244827F1001F3CD5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				96A2C8612449FBDE00F09F5E /* SWTitleView.swift */,
+				96A2C863244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift */,
+				96A2C865244AC7E200F09F5E /* SWButtonTableViewCell.swift */,
+				96A2C867244AC92000F09F5E /* SWWallpaperTableViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,7 +172,6 @@
 			files = (
 				96065C0424481CB200E2AF13 /* LaunchScreen.storyboard in Resources */,
 				96065C0124481CB200E2AF13 /* Assets.xcassets in Resources */,
-				96065BFF24481CAF00E2AF13 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,23 +182,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96065BFC24481CAF00E2AF13 /* ViewController.swift in Sources */,
+				965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */,
+				96A2C866244AC7E200F09F5E /* SWButtonTableViewCell.swift in Sources */,
+				96A2C85E2449EAC000F09F5E /* SWAddEditTableViewController.swift in Sources */,
+				96A2C8622449FBDE00F09F5E /* SWTitleView.swift in Sources */,
+				96D4749A2448491800085692 /* SWCustomer.swift in Sources */,
+				96D474982448490F00085692 /* SWTicket.swift in Sources */,
 				96065BF824481CAF00E2AF13 /* AppDelegate.swift in Sources */,
-				96065BFA24481CAF00E2AF13 /* SceneDelegate.swift in Sources */,
+				965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */,
+				96A2C868244AC92100F09F5E /* SWWallpaperTableViewCell.swift in Sources */,
+				96A2C864244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift in Sources */,
+				965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		96065BFD24481CAF00E2AF13 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96065BFE24481CAF00E2AF13 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		96065C0224481CB200E2AF13 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -287,6 +331,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6MZW7C8429;
 				INFOPLIST_FILE = SWRaffle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -294,7 +339,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = utas.edu.au.SWRaffle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -305,6 +350,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6MZW7C8429;
 				INFOPLIST_FILE = SWRaffle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -312,7 +358,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = utas.edu.au.SWRaffle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
