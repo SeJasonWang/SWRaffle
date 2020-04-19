@@ -52,4 +52,12 @@ class SWWallpaperTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+        
+    override var frame: CGRect {
+        didSet {
+            var newFrame = frame
+            newFrame.size.height -= 4
+            super.frame = newFrame
+        }
+    }
 }

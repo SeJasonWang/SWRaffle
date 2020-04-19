@@ -11,7 +11,7 @@ import UIKit
 class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate {
 
     var raffles = [SWRaffle]()
-    var currentSection = -1    
+    var currentRow = -1
     var isReadyToInsert = false
     var isReadyToDelete = false
     var isReadyToReload = false
@@ -37,15 +37,15 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     
     override func viewDidAppear(_ animated: Bool) {
         if isReadyToInsert {
-            tableView.insertSections([0], with: .automatic)
+            tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .automatic)
             isReadyToInsert = false
         }
         if isReadyToDelete {
-            tableView.deleteSections([currentSection], with: .automatic)
+            tableView.deleteRows(at: [IndexPath.init(row: currentRow, section: 0)], with: .automatic)
             isReadyToDelete = false
         }
         if isReadyToReload {
-            tableView.reloadSections([currentSection], with: .automatic)
+            tableView.reloadRows(at: [IndexPath.init(row: currentRow, section: 0)], with: .automatic)
             isReadyToReload = false
         }
     }
@@ -68,7 +68,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             database.insert(raffle: raffle)
             self.raffles = database.selectAllRaffles()
 
-            self.tableView.insertSections([0], with: .automatic)
+            self.tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .automatic)
         }
         
         self.present(wecomeViewController, animated: true, completion: nil)
@@ -77,15 +77,15 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return raffles.count
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return raffles.count
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return UIScreen.main.bounds.size.width / 2.5 + 4
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -95,7 +95,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
         }
         
-        let raffle = raffles[indexPath.section]
+        let raffle = raffles[indexPath.row]
         cell!.nameLabel.text = raffle.name
         cell!.priceLabel.text = raffle.price > 0 ? "$" + String(raffle.price) : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
@@ -107,8 +107,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        currentSection = indexPath.section
-        let raffle = raffles[indexPath.section]
+        currentRow = indexPath.row
+        let raffle = raffles[indexPath.row]
         let editTableViewController = SWAddEditTableViewController.init()
         editTableViewController.raffle = raffle
         editTableViewController.delegate = self
@@ -116,11 +116,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return 25
-        } else {
-            return 0
-        }
+        return 25
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -129,23 +125,12 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         return header
     }
-    
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 4
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let footer = UIView.init()
-        return footer
-    }
-    
+        
     // MARK: - SWAddEditTableViewControllerDelegate
     
     func didAddRaffle(_ raffle: SWRaffle) {
         
-        if raffles.count > 0 { // Hack: TableViewController will call reloadData every time after viewWillAppear when the datasource is enmpty
-            isReadyToInsert = true
-        }
+        isReadyToInsert = true
 
         raffles.insert(raffle, at: 0)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
@@ -158,7 +143,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         isReadyToReload = true
         
-        raffles[currentSection] = raffle
+        raffles[currentRow] = raffle
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         database.update(raffle: raffle)
 
@@ -168,7 +153,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
 
         isReadyToDelete = true
         
-        raffles.remove(at: currentSection)
+        raffles.remove(at: currentRow)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         database.delete(raffle: raffle)
         
