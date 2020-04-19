@@ -40,10 +40,10 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             purchaseLimit = String(raffle!.purchaseLimit)
             descriptionStr = raffle!.description
             wallpaperImage = UIImage.init(data: raffle!.wallpaperData)
-            
-            navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Delete", style: .done, target: self, action: #selector(deleteButtonPressed))
         }
                 
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Done", style: .done, target: self, action: #selector(doneButtonPressed))
+
         tableView = UITableView.init(frame: view.bounds, style: .grouped)
         tableView.separatorStyle = .none
 
@@ -52,26 +52,14 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
     // MARK: - Pricate Methods
         
-    @objc func deleteButtonPressed() {
-        
-        if raffle!.maximumNumber == raffle!.stock {
-            
-            let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
-
-                self.navigationController?.popViewController(animated: true)
-                self.delegate?.didDeleteRaffle(self.raffle!)
-
-            }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            present(alert, animated: true)
-
-        } else {
-            
-            let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + "has sold tickets and cannot be deleted", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-
+    @objc func doneButtonPressed() {
+        if check() {
+            navigationController?.popViewController(animated: true)
+            if raffle == nil {
+                delegate?.didAddRaffle(result())
+            } else {
+                delegate?.didEditRaffle(result())
+            }
         }
     }
 
@@ -123,7 +111,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 7
+        if raffle != nil {
+            return 7
+        } else {
+            return 6
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -243,13 +235,25 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 present(pickerCamera, animated: true, completion: nil)
             }
         } else if indexPath.section == 6 {
-            if check() {
-                navigationController?.popViewController(animated: true)
-                if raffle == nil {
-                    delegate?.didAddRaffle(result())
-                } else {
-                    delegate?.didEditRaffle(result())
-                }
+            
+            if raffle!.maximumNumber == raffle!.stock {
+                
+                let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+
+                    self.navigationController?.popViewController(animated: true)
+                    self.delegate?.didDeleteRaffle(self.raffle!)
+
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                present(alert, animated: true)
+
+            } else {
+                
+                let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + "has sold tickets and cannot be deleted", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+
             }
         }
     }
