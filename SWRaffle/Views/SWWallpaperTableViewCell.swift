@@ -27,7 +27,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         
         wallpaperView.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        priceLabel.translatesAutoresizingMaskIntoConstraints = false
         stockLabel.translatesAutoresizingMaskIntoConstraints = false
         
         nameLabel.layer.cornerRadius = 5
@@ -60,12 +59,10 @@ class SWWallpaperTableViewCell: UITableViewCell {
 
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-12-[wallpaperView]-12-|", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-24-[priceLabel]", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[stockLabel]-24-|", options:[], metrics:nil, views:layoutViews))
 
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[priceLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-12-|", options:[], metrics:nil, views:layoutViews))
         
     }
@@ -89,6 +86,18 @@ class SWWallpaperTableViewCell: UITableViewCell {
             addDashdeBorderLayer(wallpaperView, UIColor.white, 1)
             didDrawDashdeline = true
         }
+        
+        // Layout priceLabel
+        let maximumWidth = wallpaperView.bounds.width / 5 - 4
+        if priceLabel.intrinsicContentSize.width > maximumWidth {
+            priceLabel.frame.size = CGSize.init(width: maximumWidth, height: priceLabel.intrinsicContentSize.height)
+        } else {
+            priceLabel.frame.size = priceLabel.intrinsicContentSize
+        }
+        
+        priceLabel.center.x = (wallpaperView.bounds.width / 5 / 2) + 12
+        priceLabel.center.y = wallpaperView.center.y
+
     }
     
     func addDashdeBorderLayer(_ view:UIView, _ color:UIColor, _ width:CGFloat) {

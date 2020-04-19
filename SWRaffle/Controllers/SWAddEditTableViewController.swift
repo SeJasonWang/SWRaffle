@@ -35,7 +35,8 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             title = "Edit"
             
             name = raffle?.name
-            price = String(raffle!.price)
+            let cleanZeroPrice = raffle!.price.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", raffle!.price) :String(raffle!.price)
+            price = cleanZeroPrice
             stock = String(raffle!.stock)
             purchaseLimit = String(raffle!.purchaseLimit)
             descriptionStr = raffle!.description

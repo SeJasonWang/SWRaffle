@@ -97,7 +97,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let raffle = raffles[indexPath.row]
         cell!.nameLabel.text = raffle.name
-        cell!.priceLabel.text = raffle.price > 0 ? "$" + String(raffle.price) : "Free"
+        let cleanZeroPrice = raffle.price.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", raffle.price) :String(raffle.price)
+        cell!.priceLabel.text = raffle.price > 0 ? "$" + cleanZeroPrice : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
 
