@@ -29,7 +29,10 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         raffles = database.selectAllRaffles()
-        tableView.reloadData()
+        
+        if raffles.count == 0 {
+            presentWecomeViewController()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,13 +49,29 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             isReadyToReload = false
         }
     }
-        
+            
     // MARK: - Private Methods
     
-    @objc func addButtonPressed() {
+    @objc private func addButtonPressed() {
         let AddViewController: SWAddEditTableViewController! = SWAddEditTableViewController.init()
         AddViewController.delegate = self
         navigationController!.pushViewController(AddViewController, animated: true)
+    }
+    
+    private func presentWecomeViewController() {
+        let wecomeViewController = SWWecomeViewController.init()
+        
+        wecomeViewController.closure = {
+            let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
+            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data)
+            let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+            database.insert(raffle: raffle)
+            self.raffles = database.selectAllRaffles()
+
+            self.tableView.insertSections([0], with: .automatic)
+        }
+        
+        self.present(wecomeViewController, animated: true, completion: nil)
     }
         
     // MARK: - Table view data source
@@ -152,5 +171,9 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         raffles.remove(at: currentSection)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         database.delete(raffle: raffle)
+        
+        if raffles.count == 0 {
+            presentWecomeViewController()
+        }
     }
 }

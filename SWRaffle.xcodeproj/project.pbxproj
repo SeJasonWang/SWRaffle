@@ -10,6 +10,7 @@
 		96065BF824481CAF00E2AF13 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96065BF724481CAF00E2AF13 /* AppDelegate.swift */; };
 		96065C0124481CB200E2AF13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0024481CB200E2AF13 /* Assets.xcassets */; };
 		96065C0424481CB200E2AF13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0224481CB200E2AF13 /* LaunchScreen.storyboard */; };
+		964B5625244C3B250082417E /* SWWecomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5624244C3B250082417E /* SWWecomeViewController.swift */; };
 		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
 		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
 		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
@@ -28,6 +29,7 @@
 		96065C0024481CB200E2AF13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		96065C0324481CB200E2AF13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		96065C0524481CB300E2AF13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		964B5624244C3B250082417E /* SWWecomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWWecomeViewController.swift; sourceTree = "<group>"; };
 		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
 		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
 		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 			children = (
 				965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */,
 				96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */,
+				964B5624244C3B250082417E /* SWWecomeViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 				96A2C866244AC7E200F09F5E /* SWButtonTableViewCell.swift in Sources */,
 				96A2C85E2449EAC000F09F5E /* SWAddEditTableViewController.swift in Sources */,
 				96A2C8622449FBDE00F09F5E /* SWTitleView.swift in Sources */,
+				964B5625244C3B250082417E /* SWWecomeViewController.swift in Sources */,
 				96D4749A2448491800085692 /* SWCustomer.swift in Sources */,
 				96D474982448490F00085692 /* SWTicket.swift in Sources */,
 				96065BF824481CAF00E2AF13 /* AppDelegate.swift in Sources */,
