@@ -130,7 +130,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 5 && indexPath.row == 2 {
-            return 150
+            return UIScreen.main.bounds.size.width / 2.5 + 12
         } else if indexPath.section == 6 {
             return 60
         } else {
@@ -214,7 +214,8 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
             }
             
-            cell!.label.text = "Save"
+            cell!.label.font = UIFont.systemFont(ofSize: 16)
+            cell!.label.text = "Delete Raffle"
             return cell!
         }
     }

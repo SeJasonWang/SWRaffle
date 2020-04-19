@@ -11,6 +11,7 @@
 		96065C0124481CB200E2AF13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0024481CB200E2AF13 /* Assets.xcassets */; };
 		96065C0424481CB200E2AF13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96065C0224481CB200E2AF13 /* LaunchScreen.storyboard */; };
 		964B5625244C3B250082417E /* SWWecomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5624244C3B250082417E /* SWWecomeViewController.swift */; };
+		964B5627244C6E550082417E /* SWPaddingableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5626244C6E550082417E /* SWPaddingableLabel.swift */; };
 		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
 		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
 		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
@@ -30,6 +31,7 @@
 		96065C0324481CB200E2AF13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		96065C0524481CB300E2AF13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		964B5624244C3B250082417E /* SWWecomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWWecomeViewController.swift; sourceTree = "<group>"; };
+		964B5626244C6E550082417E /* SWPaddingableLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWPaddingableLabel.swift; sourceTree = "<group>"; };
 		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
 		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
 		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				96A2C863244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift */,
 				96A2C865244AC7E200F09F5E /* SWButtonTableViewCell.swift */,
 				96A2C867244AC92000F09F5E /* SWWallpaperTableViewCell.swift */,
+				964B5626244C6E550082417E /* SWPaddingableLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -196,6 +199,7 @@
 				965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */,
 				96A2C868244AC92100F09F5E /* SWWallpaperTableViewCell.swift in Sources */,
 				96A2C864244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift in Sources */,
+				964B5627244C6E550082417E /* SWPaddingableLabel.swift in Sources */,
 				965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -85,7 +85,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UIScreen.main.bounds.size.width / 2.5 + 4
+        return UIScreen.main.bounds.size.width / 2.5 + 12
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
