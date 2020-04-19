@@ -10,6 +10,7 @@ import UIKit
 
 protocol SWAddEditTableViewControllerDelegate: NSObjectProtocol {
     func didAddRaffle(_ raffle: SWRaffle)
+    func didDeleteRaffle(_ raffle: SWRaffle)
     func didEditRaffle(_ raffle: SWRaffle)
 }
 
@@ -32,16 +33,17 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             title = "Add"
         } else {
             title = "Edit"
+            
             name = raffle?.name
             price = String(raffle!.price)
             stock = String(raffle!.stock)
             purchaseLimit = String(raffle!.purchaseLimit)
             descriptionStr = raffle!.description
             wallpaperImage = UIImage.init(data: raffle!.wallpaperData)
+            
+            navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Delete", style: .done, target: self, action: #selector(deleteButtonPressed))
         }
-        
-        navigationItem.leftBarButtonItem?.tintColor = UIColor.orange
-        
+                
         tableView = UITableView.init(frame: view.bounds, style: .grouped)
         tableView.separatorStyle = .none
 
@@ -49,7 +51,30 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
 
     // MARK: - Pricate Methods
-    
+        
+    @objc func deleteButtonPressed() {
+        
+        if raffle!.maximumNumber == raffle!.stock {
+            
+            let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+
+                self.navigationController?.popViewController(animated: true)
+                self.delegate?.didDeleteRaffle(self.raffle!)
+
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alert, animated: true)
+
+        } else {
+            
+            let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + "has sold tickets and cannot be deleted", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+
+        }
+    }
+
     private func check() -> Bool {
 
         if name?.count == 0 {
@@ -73,8 +98,8 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
     
     private func showAlert(_ message: String?) {
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default))
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true, completion: nil)
     }
     

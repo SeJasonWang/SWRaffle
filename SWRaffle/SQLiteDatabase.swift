@@ -223,6 +223,39 @@ class SQLiteDatabase
         sqlite3_finalize(insertStatement)
     }
     
+    //helper function to run delete statements.
+    //Provide it with a binding function for replacing the "?"'s in the WHERE clause
+    private func deleteWithQuery(
+        _ deleteStatementQuery : String,
+        bindingFunction: ((_ rowHandle: OpaquePointer?)->()))
+    {
+        //prepare the statement
+        var deleteStatement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, deleteStatementQuery, -1, &deleteStatement, nil) == SQLITE_OK
+        {
+            //do bindings
+            bindingFunction(deleteStatement)
+            
+            //execute
+            if sqlite3_step(deleteStatement) == SQLITE_DONE
+            {
+                print("Successfully deleded row.")
+            }
+            else
+            {
+                print("Could not delete row.")
+                printCurrentSQLErrorMessage(db)
+            }
+        }
+        else
+        {
+            print("DELETE statement could not be prepared.")
+            printCurrentSQLErrorMessage(db)
+        }
+        //clean up
+        sqlite3_finalize(deleteStatement)
+    }
+
     //helper function to run Select statements
     //provide it with a function to do *something* with each returned row
     //(optionally) Provide it with a binding function for replacing the "?"'s in the WHERE clause
@@ -271,11 +304,11 @@ class SQLiteDatabase
             //execute
             if sqlite3_step(updateStatement) == SQLITE_DONE
             {
-                print("Successfully inserted row.")
+                print("Successfully updated row.")
             }
             else
             {
-                print("Could not insert row.")
+                print("Could not update row.")
                 printCurrentSQLErrorMessage(db)
             }
         }
@@ -319,6 +352,13 @@ class SQLiteDatabase
             sqlite3_bind_int(insertStatement, 5, raffle.purchaseLimit)
             sqlite3_bind_text(insertStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(insertStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
+        })
+    }
+    
+    func delete(raffle:SWRaffle) {
+        let deleteStatementQuery = "DELETE FROM Raffle WHERE id = ?"
+        deleteWithQuery(deleteStatementQuery, bindingFunction: { (deleteStatement) in
+            sqlite3_bind_int(deleteStatement, 1, raffle.ID)
         })
     }
     
