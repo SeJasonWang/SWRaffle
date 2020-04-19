@@ -21,7 +21,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     var name: String! = ""
     var price: String! = ""
     var stock: String! = ""
-    var maximumLimit: String! = ""
+    var purchaseLimit: String! = ""
     var descriptionStr: String! = ""
     var wallpaperImage: UIImage?
         
@@ -29,21 +29,23 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         super.viewDidLoad()
 
         if raffle == nil {
-            self.title = "Add"
+            title = "Add"
         } else {
-            self.title = "Edit"
+            title = "Edit"
             name = raffle?.name
             price = String(raffle!.price)
             stock = String(raffle!.stock)
-            maximumLimit = String(raffle!.maximumLimit)
+            purchaseLimit = String(raffle!.purchaseLimit)
             descriptionStr = raffle!.description
-            wallpaperImage = UIImage.init(data: raffle!.wallpaper)
+            wallpaperImage = UIImage.init(data: raffle!.wallpaperData)
         }
         
-        self.tableView = UITableView.init(frame: self.view.bounds, style: .grouped)
-        self.tableView.separatorStyle = .none
+        navigationItem.leftBarButtonItem?.tintColor = UIColor.orange
+        
+        tableView = UITableView.init(frame: view.bounds, style: .grouped)
+        tableView.separatorStyle = .none
 
-        self.viewWillLayoutSubviews()
+        viewWillLayoutSubviews()
     }
 
     // MARK: - Pricate Methods
@@ -51,19 +53,19 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     private func check() -> Bool {
 
         if name?.count == 0 {
-            self.showAlert("Please enter a name.")
+            showAlert("Please enter a name.")
             return false
         } else if price?.count == 0 {
-            self.showAlert("Please enter a price.")
+            showAlert("Please enter a price.")
             return false
         } else if stock?.count == 0 {
-            self.showAlert("Please enter a stock.")
+            showAlert("Please enter a stock.")
             return false
-        } else if maximumLimit?.count == 0 {
-            self.showAlert("Please enter a maximum limit.")
+        } else if purchaseLimit?.count == 0 {
+            showAlert("Please enter a purchase limit.")
             return false
         } else if wallpaperImage == nil {
-            self.showAlert("Please set a ticket wallpaper.")
+            showAlert("Please set a ticket wallpaper.")
             return false
         }
 
@@ -73,20 +75,21 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     private func showAlert(_ message: String?) {
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default))
-        self.present(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
     private func result() -> SWRaffle {
         
-        if raffle == nil {
-            raffle = SWRaffle.init(name: name, price: Double(price)!, stock: Int32(stock)!, maximumLimit: Int32(maximumLimit)!, description: descriptionStr, wallpaper: wallpaperImage!.jpegData(compressionQuality: 0)!)
-        } else {
+        if raffle == nil { // Add
+            raffle = SWRaffle.init(name: name, price: Double(price)!, stock: Int32(stock)!, maximumNumber: Int32(stock)!, purchaseLimit: Int32(purchaseLimit)!, description: descriptionStr, wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!)
+        } else { // Edit
             raffle!.name = name
             raffle!.price = Double(price)!
             raffle!.stock = Int32(stock)!
-            raffle!.maximumLimit = Int32(maximumLimit)!
+            raffle!.maximumNumber += (Int32(stock)! - raffle!.stock) // uplate the maximumNumber after editing the current stock
+            raffle!.purchaseLimit = Int32(purchaseLimit)!
             raffle!.description = descriptionStr!
-            raffle!.wallpaper = wallpaperImage!.jpegData(compressionQuality: 0)!
+            raffle!.wallpaperData = wallpaperImage!.jpegData(compressionQuality: 0)!
         }
         return raffle!
     }
@@ -148,7 +151,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 cell!.textField.placeholder = "1~99999999"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .numberPad
-                cell!.textField.text = maximumLimit
+                cell!.textField.text = purchaseLimit
             default:
                 cell!.textField.placeholder = "(Optional)"
                 cell!.textField.returnKeyType = UIReturnKeyType.done
@@ -165,8 +168,8 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                     cell = UITableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 }
                 
-                cell?.textLabel?.font = UIFont.systemFont(ofSize: 14)
-                cell!.accessoryType = .disclosureIndicator
+                cell!.textLabel?.font = UIFont.systemFont(ofSize: 16)
+                cell!.textLabel?.textColor = UIColor.orange
 
                 if indexPath.row == 0 {
                     cell!.textLabel?.text = "Take Photo..."
@@ -181,7 +184,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                     cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 }
                 if raffle != nil {
-                    cell?.wallpaperView.image = UIImage.init(data: raffle!.wallpaper)
+                    cell?.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
                 }
                 
                 return cell!
@@ -212,15 +215,15 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 pickerCamera.sourceType = .photoLibrary
                 pickerCamera.delegate = self
                 
-                self.present(pickerCamera, animated: true, completion: nil)
+                present(pickerCamera, animated: true, completion: nil)
             }
         } else if indexPath.section == 6 {
-            if self.check() == true {
-                self.navigationController?.popViewController(animated: true)
+            if check() {
+                navigationController?.popViewController(animated: true)
                 if raffle == nil {
-                    self.delegate?.didAddRaffle(self.result())
+                    delegate?.didAddRaffle(result())
                 } else {
-                    self.delegate?.didEditRaffle(self.result())
+                    delegate?.didEditRaffle(result())
                 }
             }
         }
@@ -275,17 +278,17 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        self.view.endEditing(true)
+        view.endEditing(true)
     }
 
     // MARK: - UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         var cell = textField.superview!.superview as! SWTextFieldTableViewCell
-        let section = self.tableView.indexPath(for: cell)?.section
+        let section = tableView.indexPath(for: cell)?.section
         
         if section == 0 {
-            cell = (self.tableView.cellForRow(at: IndexPath.init(row: 0, section: 1)) as! SWTextFieldTableViewCell)
+            cell = (tableView.cellForRow(at: IndexPath.init(row: 0, section: 1)) as! SWTextFieldTableViewCell)
             cell.textField.becomeFirstResponder()
         } else {
             cell.textField.resignFirstResponder()
@@ -306,7 +309,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         case 2:
             stock = textField.text
         case 3:
-            maximumLimit = textField.text
+            purchaseLimit = textField.text
         default:
             descriptionStr = textField.text
         }
@@ -326,6 +329,6 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         cell?.wallpaperView.image = imagePicker
         wallpaperImage = imagePicker
         
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }

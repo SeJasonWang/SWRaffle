@@ -15,7 +15,7 @@ class SWTextFieldTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                 
-        self.contentView.addSubview(textField)
+        contentView.addSubview(textField)
     }
     
     required init?(coder: NSCoder) {
@@ -25,7 +25,7 @@ class SWTextFieldTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        textField.frame = self.bounds
+        textField.frame = bounds
         textField.frame.origin.x += 15
         textField.frame.size.width -= 30
     }

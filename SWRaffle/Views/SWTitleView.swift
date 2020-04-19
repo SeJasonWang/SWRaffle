@@ -15,19 +15,20 @@ class SWTitleView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.white
+        backgroundColor = UIColor.white
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = "All Raffles"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
-        self.addSubview(titleLabel)
+        titleLabel.textColor = UIColor.gray
+        addSubview(titleLabel)
         
         // layout Views
         let layoutViews:[String: UILabel] = ["titleLabel": titleLabel]
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-15-[titleLabel]-15-|", options:[], metrics:nil, views:layoutViews))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-15-[titleLabel]-15-|", options:[], metrics:nil, views:layoutViews))
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel]-2-|", options:[], metrics:nil, views:layoutViews))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel]-0-|", options:[], metrics:nil, views:layoutViews))
     }
     
     required init?(coder: NSCoder) {

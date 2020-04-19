@@ -18,7 +18,7 @@ class SWWallpaperTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                 
-        self.contentView.clipsToBounds = true
+        contentView.clipsToBounds = true
         
         wallpaperView.contentMode = .scaleAspectFill
         wallpaperView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,23 +30,23 @@ class SWWallpaperTableViewCell: UITableViewCell {
         priceLabel.textAlignment = .center
         stockLabel.textAlignment = .right
 
-        self.contentView.addSubview(wallpaperView)
-        self.contentView.addSubview(nameLabel)
-        self.contentView.addSubview(priceLabel)
-        self.contentView.addSubview(stockLabel)
+        contentView.addSubview(wallpaperView)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(priceLabel)
+        contentView.addSubview(stockLabel)
         
         // layout Views
-        let layoutViews:[String: UIView] = ["contentView": self.contentView, "wallpaperView": wallpaperView, "nameLabel": nameLabel, "priceLabel": priceLabel, "stockLabel": stockLabel]
+        let layoutViews:[String: UIView] = ["contentView": contentView, "wallpaperView": wallpaperView, "nameLabel": nameLabel, "priceLabel": priceLabel, "stockLabel": stockLabel]
 
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[nameLabel]-8-|", options:[], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[priceLabel]-8-|", options:[], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[stockLabel]-8-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[nameLabel]-8-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[priceLabel]-8-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-8-[stockLabel]-8-|", options:[], metrics:nil, views:layoutViews))
 
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-8-[nameLabel]", options:[], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[priceLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-8-|", options:[], metrics:nil, views:layoutViews))        
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-8-[nameLabel]", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[priceLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-8-|", options:[], metrics:nil, views:layoutViews))        
     }
     
     required init?(coder: NSCoder) {

@@ -11,40 +11,41 @@ import UIKit
 class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate {
 
     var raffles = [SWRaffle]()
-    var currentSection = -1
-    var isReadyToInsert = false
-    var isReadyToReload = false
-    
+    var currentSection = -1    
+    var readyToInsert = false
+    var readyToReload = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = UIColor.white
-        self.title = "Home"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Add", style: .done, target: self, action: #selector(addButtonPressed))
+        view.backgroundColor = UIColor.white
+        title = "Home"
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Add", style: .done, target: self, action: #selector(addButtonPressed))
         
-        self.tableView = UITableView.init(frame: self.view.bounds, style: .grouped)
-        self.tableView.separatorStyle = .none
+        tableView = UITableView.init(frame: view.bounds, style: .grouped)
+        tableView.backgroundColor = UIColor.white
+        tableView.separatorStyle = .none
         
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         raffles = database.selectAllRaffles()
+        tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if isReadyToInsert {
+        if readyToInsert {
             tableView.insertSections([0], with: .automatic)
-            isReadyToInsert = false
+            readyToInsert = false
         }
-        if isReadyToReload {
+        if readyToReload {
             tableView.reloadSections([currentSection], with: .automatic)
-            isReadyToReload = false
+            readyToReload = false
         }
     }
-    
+        
     @objc func addButtonPressed() {
         let AddViewController: SWAddEditTableViewController! = SWAddEditTableViewController.init()
         AddViewController.delegate = self
-        self.navigationController!.pushViewController(AddViewController, animated: true)
+        navigationController!.pushViewController(AddViewController, animated: true)
     }
         
     // MARK: - Table view data source
@@ -72,7 +73,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         cell!.nameLabel.text = raffle.name
         cell!.priceLabel.text = raffle.price > 0 ? "$" + String(raffle.price) : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
-        cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaper)
+        cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
 
         return cell!
     }
@@ -85,7 +86,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         let editTableViewController = SWAddEditTableViewController.init()
         editTableViewController.raffle = raffle
         editTableViewController.delegate = self
-        self.navigationController?.pushViewController(editTableViewController, animated: true)
+        navigationController?.pushViewController(editTableViewController, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -116,23 +117,23 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     
     func didAddRaffle(_ raffle: SWRaffle) {
         
-        raffles.insert(raffle, at: 0)
-        
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-        database.insert(raffle: SWRaffle(name:raffle.name, price:raffle.price, stock:raffle.stock, maximumLimit:raffle.maximumLimit, description:raffle.description, wallpaper:raffle.wallpaper))
-        
-        if raffles.count != 1 {
-            isReadyToInsert = true
+        if raffles.count > 0 { // Hack: TableViewController will call reloadData every time after viewWillAppear when the datasource is enmpty
+            readyToInsert = true
         }
+
+        raffles.insert(raffle, at: 0)
+        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+        database.insert(raffle: SWRaffle(name:raffle.name, price:raffle.price, stock:raffle.stock, maximumNumber:raffle.maximumNumber, purchaseLimit:raffle.purchaseLimit, description:raffle.description, wallpaperData:raffle.wallpaperData))
+        
     }
     
     func didEditRaffle(_ raffle: SWRaffle) {
         
-        raffles[currentSection] = raffle
+        readyToReload = true
         
+        raffles[currentSection] = raffle
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         database.update(raffle: raffle)
 
-        isReadyToReload = true
     }
 }

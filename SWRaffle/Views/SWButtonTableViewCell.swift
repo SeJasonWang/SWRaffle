@@ -15,7 +15,7 @@ class SWButtonTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                 
-        self.contentView.addSubview(label)
+        contentView.addSubview(label)
         
         label.textAlignment = .center
         label.textColor = UIColor.red
@@ -28,7 +28,7 @@ class SWButtonTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        label.frame = self.bounds
+        label.frame = bounds
         label.frame.origin.x += 15
         label.frame.origin.y += 5
         label.frame.size.width -= 30
