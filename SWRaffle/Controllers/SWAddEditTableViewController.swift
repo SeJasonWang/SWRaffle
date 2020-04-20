@@ -34,11 +34,12 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         } else {
             title = "Edit"
             
-            name = raffle?.name
-            let cleanZeroPrice = raffle!.price.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", raffle!.price) :String(raffle!.price)
-            price = cleanZeroPrice
+            name = raffle!.name
+            price = raffle!.price.cleanZeroString()
             stock = String(raffle!.stock)
-            purchaseLimit = String(raffle!.purchaseLimit)
+            if raffle!.purchaseLimit != 0 {
+                purchaseLimit = String(raffle!.purchaseLimit)
+            }
             descriptionStr = raffle!.description
             wallpaperImage = UIImage.init(data: raffle!.wallpaperData)
         }
@@ -75,9 +76,6 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         } else if stock?.count == 0 {
             showAlert("Please enter a stock.")
             return false
-        } else if purchaseLimit?.count == 0 {
-            showAlert("Please enter a purchase limit.")
-            return false
         } else if wallpaperImage == nil {
             showAlert("Please set a ticket wallpaper.")
             return false
@@ -95,13 +93,18 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     private func result() -> SWRaffle {
         
         if raffle == nil { // Add
-            raffle = SWRaffle.init(name: name, price: Double(price)!, stock: Int32(stock)!, maximumNumber: Int32(stock)!, purchaseLimit: Int32(purchaseLimit)!, description: descriptionStr, wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!)
+            raffle = SWRaffle.init(name: name, price: Double(price)!,
+                                   stock: Int32(stock)!,
+                                   maximumNumber: Int32(stock)!,
+                                   purchaseLimit: (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!,
+                                   description: descriptionStr,
+                                   wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!)
         } else { // Edit
             raffle!.name = name
             raffle!.price = Double(price)!
             raffle!.stock = Int32(stock)!
             raffle!.maximumNumber += (Int32(stock)! - raffle!.stock) // uplate the maximumNumber after editing the current stock
-            raffle!.purchaseLimit = Int32(purchaseLimit)!
+            raffle!.purchaseLimit = (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!
             raffle!.description = descriptionStr!
             raffle!.wallpaperData = wallpaperImage!.jpegData(compressionQuality: 0)!
         }
@@ -156,22 +159,22 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.text = name
             case 1:
-                cell!.textField.placeholder = "0~99999999"
+                cell!.textField.placeholder = "Will show \"Free\" when Price is set to 0"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .decimalPad
                 cell!.textField.text = price
             case 2:
-                cell!.textField.placeholder = "1~99999999.99"
+                cell!.textField.placeholder = "Will show \"Sold out\" when Stock is 0"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .numberPad
                 cell!.textField.text = stock
             case 3:
-                cell!.textField.placeholder = "1~99999999"
+                cell!.textField.placeholder = "Optional"
                 cell!.textField.returnKeyType = UIReturnKeyType.next
                 cell!.textField.keyboardType = .numberPad
                 cell!.textField.text = purchaseLimit
             default:
-                cell!.textField.placeholder = "(Optional)"
+                cell!.textField.placeholder = "Optional"
                 cell!.textField.returnKeyType = UIReturnKeyType.done
                 cell!.textField.text = descriptionStr
             }
@@ -202,7 +205,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                     cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 }
                 if raffle != nil {
-                    cell?.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
+                    cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
+                    cell!.nameLabel.text = raffle!.name
+                    cell!.priceLabel.text = raffle!.price > 0 ? "$" + raffle!.price.cleanZeroString() : "Free"
+                    cell!.stockLabel.text = raffle!.stock > 0 ? "Stock: " + String(raffle!.stock) : "Sold Out"
+                    cell!.descriptionLabel.text = raffle!.description
                 }
                 
                 return cell!
@@ -281,7 +288,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         case 2:
             header.titleLabel.text = "Stock"
         case 3:
-            header.titleLabel.text = "Maximum Limit"
+            header.titleLabel.text = "Purchase Limit"
         case 4:
             header.titleLabel.text = "Description"
         case 5:
@@ -329,21 +336,39 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        let cell = textField.superview!.superview as! SWTextFieldTableViewCell
-        let section = tableView.indexPath(for: cell)?.section
-        
+        let textFieldCell = textField.superview!.superview as! SWTextFieldTableViewCell
+        let section = tableView.indexPath(for: textFieldCell)?.section
+                
+        let wallpaperCell: SWWallpaperTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 5)) as! SWWallpaperTableViewCell
+
         switch section {
         case 0:
             name = textField.text
+            wallpaperCell.nameLabel.text = name
         case 1:
             price = textField.text
+            if price.count > 0 {
+                let doublePrice = Double(price)!
+                wallpaperCell.priceLabel.text = doublePrice > 0 ? "$" + doublePrice.cleanZeroString() : "Free"
+            } else {
+                wallpaperCell.priceLabel.text = ""
+            }
+            wallpaperCell.layoutSubviews()
         case 2:
             stock = textField.text
+            if stock.count > 0 {
+                let intStock = Int32(stock)!
+                wallpaperCell.stockLabel.text = intStock > 0 ? "Stock: " + String(intStock) : "Sold Out"
+            } else {
+                wallpaperCell.stockLabel.text = ""
+            }
         case 3:
             purchaseLimit = textField.text
         default:
             descriptionStr = textField.text
+            wallpaperCell.descriptionLabel.text = descriptionStr
         }
+        
     }
     
     //MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate

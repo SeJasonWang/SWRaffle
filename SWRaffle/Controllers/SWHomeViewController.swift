@@ -8,6 +8,13 @@
 
 import UIKit
 
+extension Double {
+    public func cleanZeroString() -> String {
+        let cleanZeroString = self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) :String(self)
+        return cleanZeroString
+    }
+}
+
 class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate {
 
     var raffles = [SWRaffle]()
@@ -97,8 +104,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let raffle = raffles[indexPath.row]
         cell!.nameLabel.text = raffle.name
-        let cleanZeroPrice = raffle.price.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", raffle.price) :String(raffle.price)
-        cell!.priceLabel.text = raffle.price > 0 ? "$" + cleanZeroPrice : "Free"
+        cell!.descriptionLabel.text = raffle.description
+        cell!.priceLabel.text = raffle.price > 0 ? "$" + raffle.price.cleanZeroString() : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
 
@@ -135,7 +142,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
 
         raffles.insert(raffle, at: 0)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-        database.insert(raffle: SWRaffle(name:raffle.name, price:raffle.price, stock:raffle.stock, maximumNumber:raffle.maximumNumber, purchaseLimit:raffle.purchaseLimit, description:raffle.description, wallpaperData:raffle.wallpaperData))
+        database.insert(raffle: raffle)
         raffles = database.selectAllRaffles()
         
     }
