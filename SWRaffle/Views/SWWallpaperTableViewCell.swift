@@ -17,6 +17,9 @@ class SWWallpaperTableViewCell: UITableViewCell {
     let stockLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
     let wallpaperView: UIImageView! = UIImageView.init()
 
+    // only for Home page
+    let editButton: UIButton! = SWClickableAreaButton.init(type: .custom)
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                  
@@ -26,22 +29,27 @@ class SWWallpaperTableViewCell: UITableViewCell {
         wallpaperView.contentMode = .scaleAspectFill
         wallpaperView.clipsToBounds = true
         wallpaperView.layer.cornerRadius = 10
-        
-        descriptionLabel.numberOfLines = 2
+        descriptionLabel.numberOfLines = 1
+        editButton.setTitle("Edit", for: .normal)
+        editButton.backgroundColor = UIColor.orange
+        editButton.setTitleColor(UIColor.white, for: .normal)
+        editButton.layer.cornerRadius = 5
         
         wallpaperView.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         priceLabel.translatesAutoresizingMaskIntoConstraints = true
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         stockLabel.translatesAutoresizingMaskIntoConstraints = false
-                
+        editButton.translatesAutoresizingMaskIntoConstraints = false
+        
         nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
-        descriptionLabel.font = UIFont.systemFont(ofSize: 15)
-        priceLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        stockLabel.font = UIFont.systemFont(ofSize: 15)
-
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
+        priceLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        stockLabel.font = UIFont.systemFont(ofSize: 14)
+        editButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        
         nameLabel.textAlignment = .center
-        descriptionLabel.textAlignment = .right
+        descriptionLabel.textAlignment = .center
         priceLabel.textAlignment = .center
         stockLabel.textAlignment = .right
 
@@ -50,20 +58,24 @@ class SWWallpaperTableViewCell: UITableViewCell {
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(priceLabel)
         contentView.addSubview(stockLabel)
-        
+        contentView.addSubview(editButton)
+
         // layout Views
-        let layoutViews:[String: UIView] = ["contentView": contentView, "wallpaperView": wallpaperView, "nameLabel": nameLabel, "descriptionLabel": descriptionLabel, "priceLabel": priceLabel, "stockLabel": stockLabel]
+        let layoutViews:[String: UIView] = ["contentView": contentView, "wallpaperView": wallpaperView, "nameLabel": nameLabel, "descriptionLabel": descriptionLabel, "priceLabel": priceLabel, "stockLabel": stockLabel, "editButton": editButton]
 
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-12-[wallpaperView]-12-|", options:[], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[descriptionLabel(<=280)]-24-|", options:[], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[stockLabel]-24-|", options:[], metrics:nil, views:layoutViews))
-
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-12-[descriptionLabel]", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-12-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[descriptionLabel]", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[stockLabel]-24-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[editButton(==44)]-24-|", options:[], metrics:nil, views:layoutViews))
+
         
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[nameLabel]-6-[descriptionLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-12-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-12-[editButton]", options:[], metrics:nil, views:layoutViews))
+
     }
         
     required init?(coder: NSCoder) {

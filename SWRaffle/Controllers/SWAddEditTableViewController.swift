@@ -150,9 +150,9 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             if cell == nil {
                 cell = SWTextFieldTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 cell!.textField.delegate = self
+                cell!.selectionStyle = .none
             }
 
-            cell?.selectionStyle = .none
             switch indexPath.section {
             case 0:
                 cell!.textField.placeholder = "Ex. Lucy Door Prize"
@@ -203,6 +203,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 var cell: SWWallpaperTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWWallpaperTableViewCell
                 if cell == nil {
                     cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
+                    cell?.editButton.isHidden = true
                 }
                 if raffle != nil {
                     cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
@@ -220,10 +221,10 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             var cell: SWButtonTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWButtonTableViewCell
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
+                cell!.label.font = UIFont.systemFont(ofSize: 16)
+                cell!.label.text = "Delete Raffle"
             }
             
-            cell!.label.font = UIFont.systemFont(ofSize: 16)
-            cell!.label.text = "Delete Raffle"
             return cell!
         }
     }

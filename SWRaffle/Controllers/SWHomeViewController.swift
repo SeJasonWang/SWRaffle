@@ -30,7 +30,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         title = "Home"
         navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Add", style: .done, target: self, action: #selector(addButtonPressed))
         
-        tableView = UITableView.init(frame: view.bounds, style: .grouped)
         tableView.backgroundColor = UIColor.white
         tableView.separatorStyle = .none
         
@@ -63,6 +62,18 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         let AddViewController: SWAddEditTableViewController! = SWAddEditTableViewController.init()
         AddViewController.delegate = self
         navigationController!.pushViewController(AddViewController, animated: true)
+    }
+    
+    @objc private func editButtonPressed(_ sender: UIButton) {
+        
+        let row = tableView.indexPath(for: sender.superview!.superview! as! UITableViewCell)!.row
+        
+        currentRow = row
+        let raffle = raffles[row]
+        let editTableViewController = SWAddEditTableViewController.init()
+        editTableViewController.raffle = raffle
+        editTableViewController.delegate = self
+        navigationController?.pushViewController(editTableViewController, animated: true)
     }
     
     private func presentWecomeViewController() {
@@ -100,6 +111,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         var cell: SWWallpaperTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWWallpaperTableViewCell
         if cell == nil {
             cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
+            cell!.editButton.addTarget(self, action: #selector(editButtonPressed(_:)), for: .touchUpInside)
         }
         
         let raffle = raffles[indexPath.row]
@@ -115,12 +127,9 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        currentRow = indexPath.row
-        let raffle = raffles[indexPath.row]
-        let editTableViewController = SWAddEditTableViewController.init()
-        editTableViewController.raffle = raffle
-        editTableViewController.delegate = self
-        navigationController?.pushViewController(editTableViewController, animated: true)
+        let sellViewController = SWSellTableViewController.init(style: .grouped)
+        sellViewController.raffle = raffles[indexPath.row]
+        navigationController?.pushViewController(sellViewController, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

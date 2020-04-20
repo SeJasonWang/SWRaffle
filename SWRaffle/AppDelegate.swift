@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().tintColor = UIColor.orange;
 
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController.init(rootViewController: SWHomeViewController())
+        window?.rootViewController = UINavigationController.init(rootViewController: SWHomeViewController.init(style: .grouped))
         window?.makeKeyAndVisible()
         
         return true

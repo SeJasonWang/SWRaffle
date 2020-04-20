@@ -18,7 +18,6 @@ class SWTitleView: UIView {
         backgroundColor = UIColor.white
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.text = "All Raffles"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
         titleLabel.textColor = UIColor.gray
         addSubview(titleLabel)
