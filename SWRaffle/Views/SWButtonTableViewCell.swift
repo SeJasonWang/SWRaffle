@@ -17,6 +17,7 @@ class SWButtonTableViewCell: UITableViewCell {
                 
         contentView.addSubview(label)
         
+        label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textAlignment = .center
         label.textColor = UIColor.red
     }

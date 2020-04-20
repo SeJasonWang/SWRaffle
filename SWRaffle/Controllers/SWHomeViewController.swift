@@ -59,7 +59,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     // MARK: - Private Methods
     
     @objc private func addButtonPressed() {
-        let AddViewController: SWAddEditTableViewController! = SWAddEditTableViewController.init()
+        let AddViewController: SWAddEditTableViewController! = SWAddEditTableViewController.init(style: .grouped)
         AddViewController.delegate = self
         navigationController!.pushViewController(AddViewController, animated: true)
     }
@@ -70,7 +70,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         currentRow = row
         let raffle = raffles[row]
-        let editTableViewController = SWAddEditTableViewController.init()
+        let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
         editTableViewController.raffle = raffle
         editTableViewController.delegate = self
         navigationController?.pushViewController(editTableViewController, animated: true)
@@ -112,14 +112,16 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         if cell == nil {
             cell = SWWallpaperTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
             cell!.editButton.addTarget(self, action: #selector(editButtonPressed(_:)), for: .touchUpInside)
+            cell!.needsBottomMargin = true
         }
         
         let raffle = raffles[indexPath.row]
+        cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
+        cell!.numberLabel.text = "No. " + String(raffle.maximumNumber - raffle.stock + 1)
         cell!.nameLabel.text = raffle.name
         cell!.descriptionLabel.text = raffle.description
         cell!.priceLabel.text = raffle.price > 0 ? "$" + raffle.price.cleanZeroString() : "Free"
         cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
-        cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
 
         return cell!
     }

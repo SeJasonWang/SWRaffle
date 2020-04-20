@@ -7,3 +7,11 @@
 //
 
 import Foundation
+
+public struct SWCustomer {
+    var name:String
+    // Key: Raffle ID
+    // Value: Ticket Number
+    var tickets:Dictionary<Int32, Int32>
+}
+

@@ -46,10 +46,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 
         navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Done", style: .done, target: self, action: #selector(doneButtonPressed))
 
-        tableView = UITableView.init(frame: view.bounds, style: .grouped)
         tableView.separatorStyle = .none
-
-        viewWillLayoutSubviews()
     }
 
     // MARK: - Pricate Methods
@@ -67,13 +64,13 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
     private func check() -> Bool {
 
-        if name?.count == 0 {
+        if name.count == 0 {
             showAlert("Please enter a name.")
             return false
-        } else if price?.count == 0 {
+        } else if price.count == 0 {
             showAlert("Please enter a price.")
             return false
-        } else if stock?.count == 0 {
+        } else if stock.count == 0 {
             showAlert("Please enter a stock.")
             return false
         } else if wallpaperImage == nil {
@@ -134,7 +131,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 5 && indexPath.row == 2 {
-            return UIScreen.main.bounds.size.width / 2.5 + 12
+            return UIScreen.main.bounds.size.width / 2.5
         } else if indexPath.section == 6 {
             return 60
         } else {
@@ -207,10 +204,13 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 }
                 if raffle != nil {
                     cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
+                    cell!.numberLabel.text = "No. " + String(raffle!.maximumNumber - raffle!.stock + 1)
                     cell!.nameLabel.text = raffle!.name
                     cell!.priceLabel.text = raffle!.price > 0 ? "$" + raffle!.price.cleanZeroString() : "Free"
                     cell!.stockLabel.text = raffle!.stock > 0 ? "Stock: " + String(raffle!.stock) : "Sold Out"
                     cell!.descriptionLabel.text = raffle!.description
+                } else {
+                    cell!.numberLabel.text = "No. 1"
                 }
                 
                 return cell!
@@ -221,7 +221,6 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             var cell: SWButtonTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWButtonTableViewCell
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
-                cell!.label.font = UIFont.systemFont(ofSize: 16)
                 cell!.label.text = "Delete Raffle"
             }
             
@@ -310,8 +309,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let footer = UIView.init()
-        return footer
+        return UIView.init()
     }
     
     // MARK: - UIScrollViewDelegate
@@ -354,7 +352,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             } else {
                 wallpaperCell.priceLabel.text = ""
             }
-            wallpaperCell.layoutSubviews()
+            wallpaperCell.setNeedsLayout()
         case 2:
             stock = textField.text
             if stock.count > 0 {
