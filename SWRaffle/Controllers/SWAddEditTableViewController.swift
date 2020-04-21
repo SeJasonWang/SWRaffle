@@ -95,12 +95,13 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                                    maximumNumber: Int32(stock)!,
                                    purchaseLimit: (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!,
                                    description: descriptionStr,
-                                   wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!)
+                                   wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!,
+                                   soldTickets: Array.init())
         } else { // Edit
             raffle!.name = name
             raffle!.price = Double(price)!
-            raffle!.stock = Int32(stock)!
             raffle!.maximumNumber += (Int32(stock)! - raffle!.stock) // uplate the maximumNumber after editing the current stock
+            raffle!.stock = Int32(stock)!
             raffle!.purchaseLimit = (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!
             raffle!.description = descriptionStr!
             raffle!.wallpaperData = wallpaperImage!.jpegData(compressionQuality: 0)!
@@ -245,7 +246,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             }
         } else if indexPath.section == 6 {
             
-            if raffle!.maximumNumber == raffle!.stock {
+            if raffle!.soldTickets.count > 0 {
                 
                 let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in

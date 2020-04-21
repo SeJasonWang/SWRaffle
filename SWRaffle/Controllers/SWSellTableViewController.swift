@@ -17,7 +17,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Sell"
+        title = "Sell Tickets"
 
         tableView.separatorStyle = .none
     }
@@ -121,7 +121,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             }
             
             cell!.textLabel?.font = UIFont.systemFont(ofSize: 16)
-            cell!.textLabel?.textColor = UIColor.orange
+            cell!.textLabel?.textColor = UIColor.red
             cell!.textLabel?.text = "TODO..."
             
             return cell!
@@ -143,6 +143,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
                 cell!.textField.returnKeyType = UIReturnKeyType.next
             default:
                 cell!.textField.placeholder = "Enter an amount of tickets"
+                cell!.textField.keyboardType = .numberPad
                 cell!.textField.returnKeyType = UIReturnKeyType.done
             }
             
@@ -164,7 +165,18 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if check() {
-
+            var soldTickets = Array<SWSoldTicket>.init()
+            for index in 0 ..< Int32(amount)! {
+                let ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
+                let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
+                let format = DateFormatter()
+                format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
+                soldTickets.append(SWSoldTicket.init(customerName: name, ticketNumber: ticketNumber, purchaseTime: format.string(from: now)))
+            }
+            let soldViewController = SWSoldTableViewController.init(style: .grouped)
+            soldViewController.soldTickets = soldTickets
+            soldViewController.raffle = raffle
+            navigationController?.pushViewController(soldViewController, animated: true)
         }
     }
     

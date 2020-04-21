@@ -15,8 +15,8 @@ extension Double {
     }
 }
 
-class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate {
-
+class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWSoldTableViewControllerDelegate {
+    
     var raffles = [SWRaffle]()
     var currentRow = -1
     var isReadyToInsert = false
@@ -81,7 +81,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         wecomeViewController.closure = {
             let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
-            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data)
+            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data, soldTickets:Array.init())
             let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
             database.insert(raffle: raffle)
             self.raffles = database.selectAllRaffles()
@@ -129,6 +129,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        currentRow = indexPath.row
+
         let sellViewController = SWSellTableViewController.init(style: .grouped)
         sellViewController.raffle = raffles[indexPath.row]
         navigationController?.pushViewController(sellViewController, animated: true)
@@ -180,4 +182,20 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             presentWecomeViewController()
         }
     }
+    
+    // MARK: - SWSellTableViewControllerDelegate
+    
+    func didSellTickets(_ soldTickets: Array<SWSoldTicket>) {
+        
+        isReadyToReload = true
+
+        var raffle = raffles[currentRow]
+        raffle.soldTickets += soldTickets
+        raffle.stock -= Int32(soldTickets.count)
+        raffles[currentRow] = raffle
+        
+        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+        database.update(raffle: raffle)
+    }
+
 }

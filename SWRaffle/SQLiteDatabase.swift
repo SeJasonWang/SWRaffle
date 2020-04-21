@@ -335,7 +335,8 @@ class SQLiteDatabase
                 MaximumNumber INTEGER,
                 PurchaseLimit INTEGER,
                 Description CHAR(255),
-                Wallpaper MEDIUMTEXT
+                Wallpaper MEDIUMTEXT,
+                SoldTickets TEXT
             );
             """
         
@@ -343,7 +344,7 @@ class SQLiteDatabase
     }
     
     func insert(raffle:SWRaffle) {
-        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper, SoldTickets) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
             sqlite3_bind_text(insertStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(insertStatement, 2, raffle.price)
@@ -352,6 +353,7 @@ class SQLiteDatabase
             sqlite3_bind_int(insertStatement, 5, raffle.purchaseLimit)
             sqlite3_bind_text(insertStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(insertStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
+            sqlite3_bind_text(insertStatement, 8, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
         })
     }
     
@@ -363,7 +365,7 @@ class SQLiteDatabase
     }
     
     func update(raffle:SWRaffle) {
-        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ? WHERE id = ?"
+        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ?, soldTickets = ? WHERE id = ?"
         updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
             sqlite3_bind_text(updateStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(updateStatement, 2, raffle.price)
@@ -372,13 +374,14 @@ class SQLiteDatabase
             sqlite3_bind_int(updateStatement, 5, raffle.purchaseLimit)
             sqlite3_bind_text(updateStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(updateStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 8, raffle.ID)
+            sqlite3_bind_text(updateStatement, 8, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
+            sqlite3_bind_int(updateStatement, 9, raffle.ID)
         })
     }
     
     func selectAllRaffles() -> [SWRaffle] {
         var result = [SWRaffle]()
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper FROM Raffle"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, soldTickets FROM Raffle"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             
@@ -391,7 +394,8 @@ class SQLiteDatabase
                 maximumNumber: sqlite3_column_int(row, 4),
                 purchaseLimit: sqlite3_column_int(row, 5),
                 description: String(cString:sqlite3_column_text(row, 6)),
-                wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!
+                wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
+                soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 8))))
                 )
             //add it to the result array
             result.insert(raffle, at: 0)
@@ -401,7 +405,7 @@ class SQLiteDatabase
     
     func selectRaffleBy(id:Int32) -> SWRaffle? {
         var result : SWRaffle?
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper FROM Raffle WHERE id = ?"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, soldTickets FROM Raffle WHERE id = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
 //            if sqlite3_column_int(row, 0) == id {
@@ -413,12 +417,82 @@ class SQLiteDatabase
                     maximumNumber: sqlite3_column_int(row, 4),
                     purchaseLimit: sqlite3_column_int(row, 5),
                     description: String(cString:sqlite3_column_text(row, 6)),
-                    wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!
+                    wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
+                    soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 8))))
                 )
 //            }
         }, bindingFunction: { (selectStatement) in
             sqlite3_bind_int(selectStatement, 1, id)
         })
         return result
+    }
+    
+    func getSoldTicketsFromJSONString(_ jsonString:String) ->Array<SWSoldTicket> {
+        var soldTickets = Array<SWSoldTicket>.init()
+        let array = getArrayFromJSONString(jsonString)
+        for str in array {
+            let dic = getDictionaryFromJSONString(jsonString: str)
+            let soldTicket = SWSoldTicket.init(customerName: dic["customerName"] as! String,
+                                               ticketNumber: Int32(dic["ticketNumber"] as! String)!,
+                                               purchaseTime: dic["purchaseTime"] as! String)
+            soldTickets.append(soldTicket)
+        }
+        return soldTickets
+    }
+    
+    func getJSONStringFromSoldTickets(_ array:Array<SWSoldTicket>) -> String {
+        var dicArray = Array<String>.init()
+        for soldTicket in array {
+            let dic = ["customerName" : soldTicket.customerName,
+                       "ticketNumber" : String(soldTicket.ticketNumber),
+                       "purchaseTime" : soldTicket.purchaseTime]
+            dicArray.append(getJSONStringFromDictionary(dictionary: dic as NSDictionary))
+        }
+        return getJSONStringFromArray(dicArray)
+    }
+    
+    func getArrayFromJSONString(_ jsonString:String) ->Array<String> {
+        
+        let jsonData:Data = jsonString.data(using: .utf8)!
+        
+        let array = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
+        if array != nil {
+            return array as! Array<String>
+        }
+        return Array()
+    }
+
+    func getJSONStringFromArray(_ array:Array<String>) -> String {
+        
+        if (!JSONSerialization.isValidJSONObject(array)) {
+            print("无法解析出JSONString")
+            return ""
+        }
+        
+        let data : NSData! = try? JSONSerialization.data(withJSONObject: array, options: []) as NSData
+        let JSONString = NSString(data:data as Data,encoding: String.Encoding.utf8.rawValue)
+        return JSONString! as String
+    }
+    
+    func getDictionaryFromJSONString(jsonString:String) ->NSDictionary {
+        
+        let jsonData:Data = jsonString.data(using: .utf8)!
+        
+        let dict = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
+        if dict != nil {
+            return dict as! NSDictionary
+        }
+        return NSDictionary()
+    }
+    
+    func getJSONStringFromDictionary(dictionary:NSDictionary) -> String {
+        if (!JSONSerialization.isValidJSONObject(dictionary)) {
+            print("无法解析出JSONString")
+            return ""
+        }
+        let data : NSData! = try? JSONSerialization.data(withJSONObject: dictionary, options: []) as NSData
+        
+        let JSONString = NSString(data:data as Data,encoding: String.Encoding.utf8.rawValue)
+        return JSONString! as String
     }
 }
