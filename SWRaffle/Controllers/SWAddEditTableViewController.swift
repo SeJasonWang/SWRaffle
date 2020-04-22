@@ -24,6 +24,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     var stock: String! = ""
     var purchaseLimit: String! = ""
     var descriptionStr: String! = ""
+    var isMarginRaffle: Int32 = 0
     var wallpaperImage: UIImage?
         
     override func viewDidLoad() {
@@ -41,6 +42,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 purchaseLimit = String(raffle!.purchaseLimit)
             }
             descriptionStr = raffle!.description
+            isMarginRaffle = raffle!.isMarginRaffle
             wallpaperImage = UIImage.init(data: raffle!.wallpaperData)
         }
                 
@@ -80,15 +82,9 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
         return true
     }
-    
-    private func showAlert(_ message: String?) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func result() -> SWRaffle {
         
+    private func result() -> SWRaffle {
+                
         if raffle == nil { // Add
             raffle = SWRaffle.init(name: name, price: Double(price)!,
                                    stock: Int32(stock)!,
@@ -96,6 +92,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                                    purchaseLimit: (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!,
                                    description: descriptionStr,
                                    wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!,
+                                   isMarginRaffle: isMarginRaffle,
                                    soldTickets: Array.init())
         } else { // Edit
             raffle!.name = name
@@ -105,6 +102,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             raffle!.purchaseLimit = (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!
             raffle!.description = descriptionStr!
             raffle!.wallpaperData = wallpaperImage!.jpegData(compressionQuality: 0)!
+            raffle!.isMarginRaffle = isMarginRaffle
         }
         return raffle!
     }
@@ -114,16 +112,16 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         if raffle != nil {
-            return 7
+            return 8
         } else {
-            return 6
+            return 7
         }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section < 5 {
+        if section < 6 {
             return 1
-        } else if section == 5 {
+        } else if section == 6 {
             return 3
         } else {
             return 1
@@ -131,9 +129,9 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 5 && indexPath.row == 2 {
+        if indexPath.section == 6 && indexPath.row == 2 {
             return UIScreen.main.bounds.size.width / 2.5
-        } else if indexPath.section == 6 {
+        } else if indexPath.section == 7 {
             return 60
         } else {
             return 44
@@ -176,17 +174,28 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 cell!.textField.returnKeyType = UIReturnKeyType.done
                 cell!.textField.text = descriptionStr
             }
-            
             return cell!
         } else if indexPath.section == 5 {
+            let identifier = "UITableViewCell"
+            var cell = tableView.dequeueReusableCell(withIdentifier: identifier)
+            if cell == nil {
+                cell = UITableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
+            }
+            cell!.accessoryType = isMarginRaffle == 0 ? .none : .checkmark
+            cell!.textLabel?.font = UIFont.systemFont(ofSize: 16)
+            cell!.textLabel?.textColor = UIColor.orange
+            cell!.textLabel?.text = "Set as a margin raffle"
+
+            return cell!
             
+        } else if indexPath.section == 6 {
             if indexPath.row < 2 {
                 let identifier = "UITableViewCell"
                 var cell = tableView.dequeueReusableCell(withIdentifier: identifier)
                 if cell == nil {
                     cell = UITableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 }
-                
+                cell?.accessoryType = .disclosureIndicator
                 cell!.textLabel?.font = UIFont.systemFont(ofSize: 16)
                 cell!.textLabel?.textColor = UIColor.orange
 
@@ -195,6 +204,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 } else {
                     cell!.textLabel?.text = "Choose from Existing"
                 }
+                
                 return cell!
             } else {
                 let identifier = "SWWallpaperTableViewCell"
@@ -229,8 +239,22 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+        view.endEditing(true)
+
         if indexPath.section == 5 {
+            let cell = tableView.cellForRow(at: indexPath)
+            let wallpaperCell: SWWallpaperTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 6)) as! SWWallpaperTableViewCell
+            if cell!.accessoryType == .none {
+                cell!.accessoryType = .checkmark
+                wallpaperCell.marginLabel.isHidden = false
+                isMarginRaffle = 1
+            } else {
+                cell!.accessoryType = .none
+                wallpaperCell.marginLabel.isHidden = true
+                isMarginRaffle = 0
+            }
+
+        } else if indexPath.section == 6 {
             if indexPath.row == 0 {
                 print("Camera")
             } else if (indexPath.row == 1) {
@@ -242,7 +266,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 
                 present(pickerCamera, animated: true, completion: nil)
             }
-        } else if indexPath.section == 6 {
+        } else if indexPath.section == 7 {
             
             if raffle!.soldTickets.count > 0 {
                 
@@ -267,9 +291,9 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 || section == 5 {
+        if section == 0 || section == 6 {
             return 25
-        } else if section == 6 {
+        } else if section == 5 || section == 7 {
             return 0
         } else {
             return 15
@@ -290,7 +314,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             header.titleLabel.text = "Purchase Limit"
         case 4:
             header.titleLabel.text = "Description"
-        case 5:
+        case 6:
             header.titleLabel.text = "Ticket Wallpaper"
         default:
             header.titleLabel.text = ""
@@ -316,7 +340,24 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }
+    
+    //MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                
+        var imagePicker = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        
+        if picker.allowsEditing {
+            imagePicker = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage)!
+        }
 
+        let cell: SWWallpaperTableViewCell? = tableView.cellForRow(at: IndexPath.init(row: 2, section: 6)) as? SWWallpaperTableViewCell
+        cell?.wallpaperView.image = imagePicker
+        wallpaperImage = imagePicker
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
     // MARK: - UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -337,7 +378,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         let textFieldCell = textField.superview!.superview as! SWTextFieldTableViewCell
         let section = tableView.indexPath(for: textFieldCell)?.section
                 
-        let wallpaperCell: SWWallpaperTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 5)) as! SWWallpaperTableViewCell
+        let wallpaperCell: SWWallpaperTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 6)) as! SWWallpaperTableViewCell
 
         switch section {
         case 0:
@@ -367,23 +408,16 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             descriptionStr = textField.text
             wallpaperCell.descriptionLabel.text = descriptionStr
         }
-        
     }
-    
-    //MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-                
-        var imagePicker = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         
-        if picker.allowsEditing {
-            imagePicker = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage)!
-        }
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
+//        self.tableView.scrollIndicatorInsets = self.tableView.contentInset
+//    }
+//            
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        self.tableView.contentInset = UIEdgeInsets.zero
+//        self.tableView.scrollIndicatorInsets = UIEdgeInsets.zero
+//    }
 
-        let cell: SWWallpaperTableViewCell? = tableView.cellForRow(at: IndexPath.init(row: 2, section: 5)) as? SWWallpaperTableViewCell
-        cell?.wallpaperView.image = imagePicker
-        wallpaperImage = imagePicker
-        
-        dismiss(animated: true, completion: nil)
-    }
 }

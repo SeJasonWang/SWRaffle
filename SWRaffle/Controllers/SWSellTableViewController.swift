@@ -41,12 +41,6 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         return true
     }
 
-    private func showAlert(_ message: String?) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true, completion: nil)
-    }
-
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -231,5 +225,14 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             amount = textField.text
         }
     }
-
+    
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+//        self.tableView.scrollIndicatorInsets = self.tableView.contentInset
+//    }
+//            
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        self.tableView.contentInset = UIEdgeInsets.zero
+//        self.tableView.scrollIndicatorInsets = UIEdgeInsets.zero
+//    }
 }

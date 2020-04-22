@@ -17,6 +17,7 @@ public struct SWRaffle {
     var purchaseLimit:Int32
     var description:String
     var wallpaperData:Data
+    var isMarginRaffle:Int32
     
     var soldTickets:Array<SWSoldTicket>
 }

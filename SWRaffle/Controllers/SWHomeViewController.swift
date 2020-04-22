@@ -8,6 +8,14 @@
 
 import UIKit
 
+extension UIViewController {
+    public func showAlert(_ message: String?) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+}
+
 extension Int32 {
     public func ticketNumberString() -> String {
         return self > 0 ? "No. " + String(self) : ""
@@ -82,6 +90,11 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         currentRow = row
         let raffle = raffles[row]
+        
+        if raffle.soldTickets.count > 0 {
+            showAlert("The raffle that has sold tickets cannot be edited.")
+        }
+        
         let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
         editTableViewController.raffle = raffle
         editTableViewController.delegate = self
@@ -93,7 +106,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         wecomeViewController.closure = {
             let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
-            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data, soldTickets:Array.init())
+            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data, isMarginRaffle: 0, soldTickets:Array.init())
             let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
             database.insert(raffle: raffle)
             self.raffles = database.selectAllRaffles()
@@ -131,6 +144,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
         cell!.numberLabel.text = (raffle.maximumNumber - raffle.stock + 1).ticketNumberString()
         cell!.nameLabel.text = raffle.name
+        cell!.marginLabel.isHidden = raffle.isMarginRaffle == 0 ? true : false
         cell!.descriptionLabel.text = raffle.description
         cell!.priceLabel.text = raffle.price.priceString()
         cell!.stockLabel.text = raffle.stock.stockString()

@@ -336,6 +336,7 @@ class SQLiteDatabase
                 PurchaseLimit INTEGER,
                 Description CHAR(255),
                 Wallpaper MEDIUMTEXT,
+                IsMarginRaffle INTEGER,
                 SoldTickets TEXT
             );
             """
@@ -344,7 +345,7 @@ class SQLiteDatabase
     }
     
     func insert(raffle:SWRaffle) {
-        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper, SoldTickets) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper, IsMarginRaffle, SoldTickets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
             sqlite3_bind_text(insertStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(insertStatement, 2, raffle.price)
@@ -353,7 +354,8 @@ class SQLiteDatabase
             sqlite3_bind_int(insertStatement, 5, raffle.purchaseLimit)
             sqlite3_bind_text(insertStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(insertStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
-            sqlite3_bind_text(insertStatement, 8, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
+            sqlite3_bind_int(insertStatement, 8, raffle.isMarginRaffle)
+            sqlite3_bind_text(insertStatement, 9, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
         })
     }
     
@@ -365,7 +367,7 @@ class SQLiteDatabase
     }
     
     func update(raffle:SWRaffle) {
-        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ?, soldTickets = ? WHERE id = ?"
+        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ?, isMarginRaffle = ?, soldTickets = ? WHERE id = ?"
         updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
             sqlite3_bind_text(updateStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(updateStatement, 2, raffle.price)
@@ -374,14 +376,15 @@ class SQLiteDatabase
             sqlite3_bind_int(updateStatement, 5, raffle.purchaseLimit)
             sqlite3_bind_text(updateStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(updateStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
-            sqlite3_bind_text(updateStatement, 8, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
-            sqlite3_bind_int(updateStatement, 9, raffle.ID)
+            sqlite3_bind_int(updateStatement, 8, raffle.isMarginRaffle)
+            sqlite3_bind_text(updateStatement, 9, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
+            sqlite3_bind_int(updateStatement, 10, raffle.ID)
         })
     }
     
     func selectAllRaffles() -> [SWRaffle] {
         var result = [SWRaffle]()
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, soldTickets FROM Raffle"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, soldTickets FROM Raffle"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             
@@ -395,7 +398,8 @@ class SQLiteDatabase
                 purchaseLimit: sqlite3_column_int(row, 5),
                 description: String(cString:sqlite3_column_text(row, 6)),
                 wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
-                soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 8))))
+                isMarginRaffle: sqlite3_column_int(row, 8),
+                soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 9))))
                 )
             //add it to the result array
             result.insert(raffle, at: 0)
@@ -405,7 +409,7 @@ class SQLiteDatabase
     
     func selectRaffleBy(id:Int32) -> SWRaffle? {
         var result : SWRaffle?
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, soldTickets FROM Raffle WHERE id = ?"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, soldTickets FROM Raffle WHERE id = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
 //            if sqlite3_column_int(row, 0) == id {
@@ -418,7 +422,8 @@ class SQLiteDatabase
                     purchaseLimit: sqlite3_column_int(row, 5),
                     description: String(cString:sqlite3_column_text(row, 6)),
                     wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
-                    soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 8))))
+                    isMarginRaffle: sqlite3_column_int(row, 8),
+                    soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 9))))
                 )
 //            }
         }, bindingFunction: { (selectStatement) in
