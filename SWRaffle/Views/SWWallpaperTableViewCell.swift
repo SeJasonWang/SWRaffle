@@ -33,7 +33,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         
         descriptionLabel.numberOfLines = 1
         
-        editButton.setTitle("Edit", for: .normal)
         editButton.backgroundColor = UIColor.orange
         editButton.setTitleColor(UIColor.white, for: .normal)
         editButton.layer.cornerRadius = 5
@@ -73,7 +72,7 @@ class SWWallpaperTableViewCell: UITableViewCell {
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-12-[wallpaperView]-12-|", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[stockLabel]-24-|", options:[], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[editButton(==44)]-24-|", options:[], metrics:nil, views:layoutViews))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[editButton(==50)]-24-|", options:[], metrics:nil, views:layoutViews))
 
         
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-0-[wallpaperView]-0-|", options:[], metrics:nil, views:layoutViews))

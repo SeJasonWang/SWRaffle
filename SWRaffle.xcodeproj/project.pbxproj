@@ -17,6 +17,7 @@
 		964B5631244DB9650082417E /* SWDashableIamgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5630244DB9650082417E /* SWDashableIamgeView.swift */; };
 		964B5633244E92E40082417E /* SWSoldTicket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5632244E92E40082417E /* SWSoldTicket.swift */; };
 		964B5637244E9F9E0082417E /* SWShareTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5636244E9F9E0082417E /* SWShareTableViewController.swift */; };
+		964B56392450343C0082417E /* SWWinnerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B56382450343C0082417E /* SWWinnerTableViewController.swift */; };
 		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
 		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
 		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
@@ -41,6 +42,7 @@
 		964B5630244DB9650082417E /* SWDashableIamgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWDashableIamgeView.swift; sourceTree = "<group>"; };
 		964B5632244E92E40082417E /* SWSoldTicket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWSoldTicket.swift; sourceTree = "<group>"; };
 		964B5636244E9F9E0082417E /* SWShareTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWShareTableViewController.swift; sourceTree = "<group>"; };
+		964B56382450343C0082417E /* SWWinnerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWWinnerTableViewController.swift; sourceTree = "<group>"; };
 		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
 		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
 		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */,
 				964B562E244D87FA0082417E /* SWSellTableViewController.swift */,
 				964B5636244E9F9E0082417E /* SWShareTableViewController.swift */,
+				964B56382450343C0082417E /* SWWinnerTableViewController.swift */,
 				964B5624244C3B250082417E /* SWWecomeViewController.swift */,
 			);
 			path = Controllers;
@@ -216,6 +219,7 @@
 				964B5627244C6E550082417E /* SWPaddingableLabel.swift in Sources */,
 				964B5633244E92E40082417E /* SWSoldTicket.swift in Sources */,
 				965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */,
+				964B56392450343C0082417E /* SWWinnerTableViewController.swift in Sources */,
 				964B5631244DB9650082417E /* SWDashableIamgeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

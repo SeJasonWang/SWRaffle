@@ -282,7 +282,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
             } else {
                 
-                let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + "has sold tickets and cannot be deleted", preferredStyle: .alert)
+                let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + " has sold tickets and cannot be deleted", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 present(alert, animated: true)
 

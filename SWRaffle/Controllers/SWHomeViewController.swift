@@ -35,7 +35,7 @@ extension Double {
     }
 }
 
-class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate {
+class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate, SWWinnerTableViewControllerDelegate {
     
     var raffles = [SWRaffle]()
     var currentRow = -1
@@ -91,14 +91,18 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         currentRow = row
         let raffle = raffles[row]
         
-        if raffle.soldTickets.count > 0 {
-            showAlert("The raffle that has sold tickets cannot be edited.")
+        if raffle.soldTickets.count == 0 { // Edit
+            let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
+            editTableViewController.raffle = raffle
+            editTableViewController.delegate = self
+            navigationController?.pushViewController(editTableViewController, animated: true)
+        } else { // Draw
+            let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
+            winnerViewController.delegate = self
+            winnerViewController.raffle = raffle
+            winnerViewController.ticket = raffle.soldTickets[Int(arc4random()) % raffle.soldTickets.count]
+            self.navigationController?.pushViewController(winnerViewController, animated: true)
         }
-        
-        let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
-        editTableViewController.raffle = raffle
-        editTableViewController.delegate = self
-        navigationController?.pushViewController(editTableViewController, animated: true)
     }
     
     private func presentWecomeViewController() {
@@ -147,6 +151,9 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         cell!.descriptionLabel.text = raffle.description
         cell!.priceLabel.text = raffle.price.priceString()
         cell!.stockLabel.text = raffle.stock.stockString()
+        
+        let title = raffle.soldTickets.count == 0 ? "Edit" : "Draw"
+        cell!.editButton.setTitle(title, for: .normal)
 
         return cell!
     }
@@ -171,8 +178,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         return header
     }
-        
-    // MARK: - SWAddEditTableViewControllerDelegate
+            
+    // MARK: - SWAddEditTableViewControllerDelegate & SWWinnerTableViewControllerDelegate
     
     func didAddRaffle(_ raffle: SWRaffle) {
         
