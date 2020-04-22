@@ -215,7 +215,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 }
                 if raffle != nil {
                     cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
-                    cell!.numberLabel.text = (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString()
+                    cell!.numberLabel.text = raffle!.isMarginRaffle == 0 ? (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString() : "No. ???"
                     cell!.nameLabel.text = raffle!.name
                     cell!.priceLabel.text = raffle!.price.priceString()
                     cell!.stockLabel.text = raffle!.stock.stockString()
@@ -246,11 +246,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             let wallpaperCell: SWWallpaperTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 6)) as! SWWallpaperTableViewCell
             if cell!.accessoryType == .none {
                 cell!.accessoryType = .checkmark
-                wallpaperCell.marginLabel.isHidden = false
+                wallpaperCell.numberLabel.text = "No. ???"
                 isMarginRaffle = 1
             } else {
                 cell!.accessoryType = .none
-                wallpaperCell.marginLabel.isHidden = true
+                wallpaperCell.numberLabel.text = (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString()
                 isMarginRaffle = 0
             }
 

@@ -13,7 +13,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
     var needsBottomMargin = false
     let numberLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
     let nameLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
-    let marginLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
     let descriptionLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
     let priceLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
     let stockLabel: SWPaddingableLabel! = SWPaddingableLabel.init()
@@ -26,9 +25,7 @@ class SWWallpaperTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
                  
         selectionStyle = .none
-        
-        marginLabel.text = "Margin"
-        
+                
         wallpaperView.backgroundColor = UIColor.lightGray
         wallpaperView.contentMode = .scaleAspectFill
         wallpaperView.clipsToBounds = true
@@ -44,7 +41,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         wallpaperView.translatesAutoresizingMaskIntoConstraints = false
         numberLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        marginLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         priceLabel.translatesAutoresizingMaskIntoConstraints = true
         stockLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +48,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         
         numberLabel.font = UIFont.boldSystemFont(ofSize: 16)
         nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
-        marginLabel.font = UIFont.systemFont(ofSize: 14)
         descriptionLabel.font = UIFont.systemFont(ofSize: 14)
         priceLabel.font = UIFont.boldSystemFont(ofSize: 16)
         stockLabel.font = UIFont.systemFont(ofSize: 14)
@@ -60,7 +55,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         
         numberLabel.textAlignment = .center
         nameLabel.textAlignment = .center
-        marginLabel.textAlignment = .center
         descriptionLabel.textAlignment = .center
         priceLabel.textAlignment = .center
         stockLabel.textAlignment = .right
@@ -68,14 +62,13 @@ class SWWallpaperTableViewCell: UITableViewCell {
         contentView.addSubview(wallpaperView)
         contentView.addSubview(numberLabel)
         contentView.addSubview(nameLabel)
-        contentView.addSubview(marginLabel)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(priceLabel)
         contentView.addSubview(stockLabel)
         contentView.addSubview(editButton)
 
         // layout Views
-        let layoutViews:[String: UIView] = ["contentView": contentView, "wallpaperView": wallpaperView, "numberLabel": numberLabel, "marginLabel": marginLabel, "nameLabel": nameLabel, "descriptionLabel": descriptionLabel, "priceLabel": priceLabel, "stockLabel": stockLabel, "editButton": editButton]
+        let layoutViews:[String: UIView] = ["contentView": contentView, "wallpaperView": wallpaperView, "numberLabel": numberLabel, "nameLabel": nameLabel, "descriptionLabel": descriptionLabel, "priceLabel": priceLabel, "stockLabel": stockLabel, "editButton": editButton]
 
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:|-12-[wallpaperView]-12-|", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"H:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterY], metrics:nil, views:layoutViews))
@@ -88,7 +81,6 @@ class SWWallpaperTableViewCell: UITableViewCell {
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[numberLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[nameLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[nameLabel]-6-[descriptionLabel]", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[contentView]-(<=0)-[marginLabel]-12-|", options:[.alignAllCenterX], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[stockLabel]-12-|", options:[], metrics:nil, views:layoutViews))
         contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-12-[editButton]", options:[], metrics:nil, views:layoutViews))
 

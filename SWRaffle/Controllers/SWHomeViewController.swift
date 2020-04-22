@@ -142,9 +142,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let raffle = raffles[indexPath.row]
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-        cell!.numberLabel.text = (raffle.maximumNumber - raffle.stock + 1).ticketNumberString()
+        cell!.numberLabel.text = raffle.isMarginRaffle == 0 ? (raffle.maximumNumber - raffle.stock + 1).ticketNumberString() : "No. ???"
         cell!.nameLabel.text = raffle.name
-        cell!.marginLabel.isHidden = raffle.isMarginRaffle == 0 ? true : false
         cell!.descriptionLabel.text = raffle.description
         cell!.priceLabel.text = raffle.price.priceString()
         cell!.stockLabel.text = raffle.stock.stockString()
