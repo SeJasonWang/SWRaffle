@@ -16,7 +16,7 @@
 		964B562F244D87FA0082417E /* SWSellTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B562E244D87FA0082417E /* SWSellTableViewController.swift */; };
 		964B5631244DB9650082417E /* SWDashableIamgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5630244DB9650082417E /* SWDashableIamgeView.swift */; };
 		964B5633244E92E40082417E /* SWSoldTicket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5632244E92E40082417E /* SWSoldTicket.swift */; };
-		964B5637244E9F9E0082417E /* SWSoldTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5636244E9F9E0082417E /* SWSoldTableViewController.swift */; };
+		964B5637244E9F9E0082417E /* SWShareTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5636244E9F9E0082417E /* SWShareTableViewController.swift */; };
 		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
 		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
 		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
@@ -40,7 +40,7 @@
 		964B562E244D87FA0082417E /* SWSellTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWSellTableViewController.swift; sourceTree = "<group>"; };
 		964B5630244DB9650082417E /* SWDashableIamgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWDashableIamgeView.swift; sourceTree = "<group>"; };
 		964B5632244E92E40082417E /* SWSoldTicket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWSoldTicket.swift; sourceTree = "<group>"; };
-		964B5636244E9F9E0082417E /* SWSoldTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWSoldTableViewController.swift; sourceTree = "<group>"; };
+		964B5636244E9F9E0082417E /* SWShareTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWShareTableViewController.swift; sourceTree = "<group>"; };
 		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
 		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
 		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
@@ -100,7 +100,7 @@
 				965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */,
 				96A2C85D2449EAC000F09F5E /* SWAddEditTableViewController.swift */,
 				964B562E244D87FA0082417E /* SWSellTableViewController.swift */,
-				964B5636244E9F9E0082417E /* SWSoldTableViewController.swift */,
+				964B5636244E9F9E0082417E /* SWShareTableViewController.swift */,
 				964B5624244C3B250082417E /* SWWecomeViewController.swift */,
 			);
 			path = Controllers;
@@ -201,7 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */,
-				964B5637244E9F9E0082417E /* SWSoldTableViewController.swift in Sources */,
+				964B5637244E9F9E0082417E /* SWShareTableViewController.swift in Sources */,
 				96A2C866244AC7E200F09F5E /* SWButtonTableViewCell.swift in Sources */,
 				96A2C85E2449EAC000F09F5E /* SWAddEditTableViewController.swift in Sources */,
 				96A2C8622449FBDE00F09F5E /* SWTitleView.swift in Sources */,

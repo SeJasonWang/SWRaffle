@@ -8,14 +8,26 @@
 
 import UIKit
 
+extension Int32 {
+    public func ticketNumberString() -> String {
+        return self > 0 ? "No. " + String(self) : ""
+    }
+    public func stockString() -> String {
+        return self > 0 ? "Stock: " + String(self) : "Sold Out"
+    }
+}
+
 extension Double {
+    public func priceString() -> String {
+        return self > 0 ? "$" + self.cleanZeroString() : "Free"
+    }
     public func cleanZeroString() -> String {
         let cleanZeroString = self.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", self) :String(self)
         return cleanZeroString
     }
 }
 
-class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWSoldTableViewControllerDelegate {
+class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate {
     
     var raffles = [SWRaffle]()
     var currentRow = -1
@@ -117,11 +129,11 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let raffle = raffles[indexPath.row]
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-        cell!.numberLabel.text = "No. " + String(raffle.maximumNumber - raffle.stock + 1)
+        cell!.numberLabel.text = (raffle.maximumNumber - raffle.stock + 1).ticketNumberString()
         cell!.nameLabel.text = raffle.name
         cell!.descriptionLabel.text = raffle.description
-        cell!.priceLabel.text = raffle.price > 0 ? "$" + raffle.price.cleanZeroString() : "Free"
-        cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
+        cell!.priceLabel.text = raffle.price.priceString()
+        cell!.stockLabel.text = raffle.stock.stockString()
 
         return cell!
     }
@@ -141,7 +153,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = SWTitleView.init()
+        let header = SWTitleView.init(bottom: 0)
         header.titleLabel.text = "All Raffles"
         
         return header

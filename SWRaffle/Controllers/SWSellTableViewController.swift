@@ -17,7 +17,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Sell Tickets"
+        title = "Sell"
 
         tableView.separatorStyle = .none
     }
@@ -32,7 +32,11 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         } else if amount.count == 0 {
             showAlert("Please enter an amount.")
             return false
+        } else if Int32(amount)! > raffle.stock {
+            showAlert("Insufficient stock\n remaining: " + String(raffle.stock))
+            return false
         }
+
 
         return true
     }
@@ -71,7 +75,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             header.backgroundColor = UIColor.white
             return header
         } else {
-            let header = SWTitleView.init()
+            let header = SWTitleView.init(bottom: 0)
             switch section {
             case 1:
                 header.titleLabel.text = "History Customers"
@@ -104,11 +108,11 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             }
             
             cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-            cell!.numberLabel.text = "No. " + String(raffle.maximumNumber - raffle.stock + 1)
+            cell!.numberLabel.text = (raffle.maximumNumber - raffle.stock + 1).ticketNumberString()
             cell!.nameLabel.text = raffle.name
             cell!.descriptionLabel.text = raffle.description
-            cell!.priceLabel.text = raffle.price > 0 ? "$" + raffle.price.cleanZeroString() : "Free"
-            cell!.stockLabel.text = raffle.stock > 0 ? "Stock: " + String(raffle.stock) : "Sold Out"
+            cell!.priceLabel.text = raffle.price.priceString()
+            cell!.stockLabel.text = raffle.stock.stockString()
 
             return cell!
         } else if indexPath.section == 1 {
@@ -164,7 +168,8 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if check() {
+        if indexPath.section == 4 {
+            if check() {
             var soldTickets = Array<SWSoldTicket>.init()
             for index in 0 ..< Int32(amount)! {
                 let ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
@@ -173,10 +178,11 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
                 format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
                 soldTickets.append(SWSoldTicket.init(customerName: name, ticketNumber: ticketNumber, purchaseTime: format.string(from: now)))
             }
-            let soldViewController = SWSoldTableViewController.init(style: .grouped)
+            let soldViewController = SWShareTableViewController.init(style: .grouped)
             soldViewController.soldTickets = soldTickets
             soldViewController.raffle = raffle
             navigationController?.pushViewController(soldViewController, animated: true)
+            }
         }
     }
     

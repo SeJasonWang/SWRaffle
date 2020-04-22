@@ -205,13 +205,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 }
                 if raffle != nil {
                     cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
-                    cell!.numberLabel.text = "No. " + String(raffle!.maximumNumber - raffle!.stock + 1)
+                    cell!.numberLabel.text = (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString()
                     cell!.nameLabel.text = raffle!.name
-                    cell!.priceLabel.text = raffle!.price > 0 ? "$" + raffle!.price.cleanZeroString() : "Free"
-                    cell!.stockLabel.text = raffle!.stock > 0 ? "Stock: " + String(raffle!.stock) : "Sold Out"
+                    cell!.priceLabel.text = raffle!.price.priceString()
+                    cell!.stockLabel.text = raffle!.stock.stockString()
                     cell!.descriptionLabel.text = raffle!.description
-                } else {
-                    cell!.numberLabel.text = "No. 1"
                 }
                 
                 return cell!
@@ -279,7 +277,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = SWTitleView.init()
+        let header = SWTitleView.init(bottom: 0)
         
         switch section {
         case 0:
@@ -349,7 +347,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             price = textField.text
             if price.count > 0 {
                 let doublePrice = Double(price)!
-                wallpaperCell.priceLabel.text = doublePrice > 0 ? "$" + doublePrice.cleanZeroString() : "Free"
+                wallpaperCell.priceLabel.text = doublePrice.priceString()
             } else {
                 wallpaperCell.priceLabel.text = ""
             }
@@ -357,10 +355,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         case 2:
             stock = textField.text
             if stock.count > 0 {
-                let intStock = Int32(stock)!
-                wallpaperCell.stockLabel.text = intStock > 0 ? "Stock: " + String(intStock) : "Sold Out"
+                wallpaperCell.stockLabel.text = Int32(stock)!.stockString()
+                wallpaperCell.numberLabel.text = "No. 1"
             } else {
                 wallpaperCell.stockLabel.text = ""
+                wallpaperCell.numberLabel.text = ""
             }
         case 3:
             purchaseLimit = textField.text

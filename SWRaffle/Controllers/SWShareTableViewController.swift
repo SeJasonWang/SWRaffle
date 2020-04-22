@@ -1,5 +1,5 @@
 //
-//  SWSoldTableViewController.swift
+//  SWShareTableViewController.swift
 //  SWRaffle
 //
 //  Created by Jason on 2020/4/21.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol SWSoldTableViewControllerDelegate: NSObjectProtocol {
+protocol SWShareTableViewControllerDelegate: NSObjectProtocol {
     func didSellTickets(_ soldTickets: Array<SWSoldTicket>)
 }
 
-class SWSoldTableViewController: UITableViewController {
+class SWShareTableViewController: UITableViewController {
 
-    weak var delegate: SWSoldTableViewControllerDelegate?
+    weak var delegate: SWShareTableViewControllerDelegate?
 
     var soldTickets: Array<SWSoldTicket>!
     var raffle: SWRaffle!
@@ -22,9 +22,9 @@ class SWSoldTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.delegate = navigationController?.viewControllers.first as? SWSoldTableViewControllerDelegate
+        self.delegate = navigationController?.viewControllers.first as? SWShareTableViewControllerDelegate
         
-        title = "Sold Tickets"
+        title = "Share"
 
         tableView.separatorStyle = .none
     }
@@ -61,7 +61,7 @@ class SWSoldTableViewController: UITableViewController {
             cell!.numberLabel.text = "No. " + String(soldTicket.ticketNumber)
             cell!.nameLabel.text = raffle.name
             cell!.descriptionLabel.text = raffle.description
-            cell!.priceLabel.text = raffle.price > 0 ? "$" + raffle.price.cleanZeroString() : "Free"
+            cell!.priceLabel.text = raffle.price.priceString()
             cell!.stockLabel.text = soldTicket.customerName
             
             return cell!
@@ -91,37 +91,58 @@ class SWSoldTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 25
+        } else if section == soldTickets.count {
+            return 20
         } else {
             return 0
         }
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = SWTitleView.init()
-        
         if section == 0 {
+            let header = SWTitleView.init(bottom: 0)
             header.titleLabel.text = "All Tickets"
+            return header
         } else {
-            header.titleLabel.text = ""
+            return UIView.init()
         }
-        
-        return header
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if section == soldTickets.count {
+            view.backgroundColor = UIColor.clear
+        } else {
+            view.backgroundColor = UIColor.white
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if section < soldTickets.count - 1 {
             return 12
+        } else if section == soldTickets.count - 1 {
+            return 62.5
         } else {
             return 20
         }
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView.init()
+        if section == soldTickets.count - 1 {
+            // Total price and Amount
+            let footer = SWTitleView.init(bottom: 12)
+            footer.titleLabel.textColor = UIColor.red
+            footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+            let totalPriceStr = "Total Price: " + (raffle.price * Double(soldTickets.count)).priceString() + "\n"
+            let amountStr = "Amount: " + String(soldTickets.count)
+            footer.titleLabel.text = totalPriceStr + amountStr
+            return footer
+        } else {
+            return UIView.init()
+        }
     }
     
     override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        if section < soldTickets.count - 1 {
+        if section < soldTickets.count {
             view.backgroundColor = UIColor.white
         } else {
             view.backgroundColor = UIColor.clear
