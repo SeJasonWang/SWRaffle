@@ -16,7 +16,7 @@ class SWWinnerTableViewController: UITableViewController {
 
     weak var delegate: SWWinnerTableViewControllerDelegate?
 
-    var ticket: SWSoldTicket!
+    var ticket: SWSoldTicket?
     var raffle: SWRaffle!
 
     override func viewDidLoad() {
@@ -55,11 +55,11 @@ class SWWinnerTableViewController: UITableViewController {
             }
             
             cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-            cell!.numberLabel.text = "No. " + String(ticket.ticketNumber)
+            cell!.numberLabel.text = "No. " + (ticket == nil ? "???" : String(ticket!.ticketNumber))
             cell!.nameLabel.text = raffle.name
             cell!.descriptionLabel.text = raffle.description
             cell!.priceLabel.text = raffle.price.priceString()
-            cell!.stockLabel.text = ticket.customerName
+            cell!.stockLabel.text = ticket == nil ?  "xxxx" : ticket!.customerName
             
             return cell!
         } else {
@@ -121,7 +121,7 @@ class SWWinnerTableViewController: UITableViewController {
             let footer = SWTitleView.init(bottom: 12)
             footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
             footer.titleLabel.textColor = UIColor.red
-            let amountStr = "The winner is : " + ticket.customerName
+            let amountStr = ticket == nil ? "This raffle has no winner" : "The winner is : " + ticket!.customerName
             footer.titleLabel.text = amountStr
             return footer
         } else {

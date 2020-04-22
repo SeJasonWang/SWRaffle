@@ -24,6 +24,27 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Pricate Methods
 
+    private func getRandomTicketNumber(_ soldTickets: Array<SWSoldTicket>, _ maximumNumber: Int) ->() ->Int? {
+
+        var nums = [Int]();
+        for i in 1 ... maximumNumber {
+            nums.append(i)
+            for soldTicket in soldTickets {
+                if i == soldTicket.ticketNumber {
+                    nums.removeLast()
+                    break
+                }
+            }
+        }
+
+        func randomMan() -> Int! {
+            let index = Int(arc4random_uniform(UInt32(nums.count)))
+            return nums.remove(at: index)
+        }
+
+        return randomMan
+    }
+    
     private func check() -> Bool {
 
         if name.count == 0 {
@@ -165,8 +186,16 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         if indexPath.section == 4 {
             if check() {
                 var soldTickets = Array<SWSoldTicket>.init()
+                let randomTicketNumber = getRandomTicketNumber(raffle.soldTickets, Int(raffle.maximumNumber))
+
                 for index in 0 ..< Int32(amount)! {
-                    let ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
+                    let ticketNumber: Int32
+                    if raffle.isMarginRaffle == 0 {
+                        ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
+                    } else {
+                        ticketNumber = Int32(randomTicketNumber()!)
+                    }
+                    print("生成票号: " + String(ticketNumber))
                     let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
                     let format = DateFormatter()
                     format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"

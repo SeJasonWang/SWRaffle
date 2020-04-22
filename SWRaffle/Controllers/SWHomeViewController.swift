@@ -38,13 +38,17 @@ extension Double {
     }
 }
 
-class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate, SWWinnerTableViewControllerDelegate, SWWecomeViewControllerDelegate {
+class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate, SWWinnerTableViewControllerDelegate, SWWecomeViewControllerDelegate, UITextFieldDelegate {
     
     var raffles = [SWRaffle]()
     var currentRow = -1
+
     var isReadyToInsert = false
     var isReadyToDelete = false
     var isReadyToReload = false
+    
+    var margin: Int = 0
+    var alertAction: UIAlertAction?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,11 +104,41 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             editTableViewController.delegate = self
             navigationController?.pushViewController(editTableViewController, animated: true)
         } else { // Draw
-            let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
-            winnerViewController.delegate = self
-            winnerViewController.raffle = raffle
-            winnerViewController.ticket = raffle.soldTickets.randomElement()
-            self.navigationController?.pushViewController(winnerViewController, animated: true)
+            if raffle.isMarginRaffle == 0 { // Normal Raffle
+                let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
+                winnerViewController.delegate = self
+                winnerViewController.raffle = raffle
+                winnerViewController.ticket = raffle.soldTickets.randomElement()
+                self.navigationController?.pushViewController(winnerViewController, animated: true)
+            } else { // Margin Raffle
+                let alert = UIAlertController(title: nil, message: "Plase enter a margin:", preferredStyle: .alert)
+                
+                alert.addTextField { (textField) in
+                    textField.delegate = self
+                    textField.keyboardType = .numberPad
+                }
+                alertAction = UIAlertAction(title: "Confirm", style: .default, handler: { (action) in
+                    let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
+                    winnerViewController.delegate = self
+                    winnerViewController.raffle = raffle
+                    
+                    for soldTicket in raffle.soldTickets {
+                        if self.margin == soldTicket.ticketNumber {
+                            winnerViewController.ticket = soldTicket
+                            break;
+                        }
+                    }
+                    self.margin = 0
+                    
+                    self.navigationController?.pushViewController(winnerViewController, animated: true)
+                })
+                alertAction?.isEnabled = false
+                alert.addAction(alertAction!)
+                
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                
+                present(alert, animated: true)
+            }
         }
     }
     
@@ -242,4 +276,15 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         database.update(raffle: raffle)
     }
 
+    // MARK: - UITextFieldDelegate
+        
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField.text!.count > 0 {
+            margin = Int(textField.text!)!
+            alertAction?.isEnabled = true
+        } else {
+            margin = 0
+            alertAction?.isEnabled = false
+        }
+    }
 }
