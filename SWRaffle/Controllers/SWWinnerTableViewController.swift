@@ -109,11 +109,24 @@ class SWWinnerTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 12
+        if section == 0 {
+            return 43.5
+        } else {
+            return 12
+        }
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView.init()
+        if section == 0 {
+            let footer = SWTitleView.init(bottom: 12)
+            footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+            footer.titleLabel.textColor = UIColor.red
+            let amountStr = "The winner is : " + ticket.customerName
+            footer.titleLabel.text = amountStr
+            return footer
+        } else {
+            return UIView.init()
+        }
     }
     
     override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {

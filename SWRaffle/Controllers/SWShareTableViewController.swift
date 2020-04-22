@@ -70,7 +70,7 @@ class SWShareTableViewController: UITableViewController {
             var cell: SWButtonTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWButtonTableViewCell
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
-                cell!.label.text = "Share Tickets"
+                cell!.label.text = "Submit and Share tickets"
                 cell!.label.textColor = UIColor.orange
             }
             
@@ -132,9 +132,9 @@ class SWShareTableViewController: UITableViewController {
             let footer = SWTitleView.init(bottom: 12)
             footer.titleLabel.textColor = UIColor.red
             footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-            let totalPriceStr = "Total Price: " + (raffle.price * Double(soldTickets.count)).priceString() + "\n"
-            let amountStr = "Amount: " + String(soldTickets.count)
-            footer.titleLabel.text = totalPriceStr + amountStr
+            let amountStr = "Amount: " + String(soldTickets.count) + "\n"
+            let totalPriceStr = "Total Price: " + (raffle.price * Double(soldTickets.count)).priceString()
+            footer.titleLabel.text = amountStr + totalPriceStr
             return footer
         } else {
             return UIView.init()

@@ -75,6 +75,9 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         } else if stock.count == 0 {
             showAlert("Please enter a stock.")
             return false
+        } else if Int(stock) == 0 {
+            showAlert("Stock must be larger than 0.")
+            return false
         } else if wallpaperImage == nil {
             showAlert("Please set a ticket wallpaper.")
             return false
@@ -215,11 +218,13 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 }
                 if raffle != nil {
                     cell!.wallpaperView.image = UIImage.init(data: raffle!.wallpaperData)
-                    cell!.numberLabel.text = raffle!.isMarginRaffle == 0 ? (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString() : "No. ???"
+                    cell!.numberLabel.text = raffle!.isMarginRaffle == 0 ? "No. 1" : "No. ???"
                     cell!.nameLabel.text = raffle!.name
                     cell!.priceLabel.text = raffle!.price.priceString()
                     cell!.stockLabel.text = raffle!.stock.stockString()
                     cell!.descriptionLabel.text = raffle!.description
+                } else {
+                    cell!.numberLabel.text = "No. 1"
                 }
                 
                 return cell!
@@ -250,7 +255,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 isMarginRaffle = 1
             } else {
                 cell!.accessoryType = .none
-                wallpaperCell.numberLabel.text = (raffle!.maximumNumber - raffle!.stock + 1).ticketNumberString()
+                wallpaperCell.numberLabel.text = "No. 1"
                 isMarginRaffle = 0
             }
 
@@ -397,10 +402,8 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
             stock = textField.text
             if stock.count > 0 {
                 wallpaperCell.stockLabel.text = Int32(stock)!.stockString()
-                wallpaperCell.numberLabel.text = "No. 1"
             } else {
                 wallpaperCell.stockLabel.text = ""
-                wallpaperCell.numberLabel.text = ""
             }
         case 3:
             purchaseLimit = textField.text

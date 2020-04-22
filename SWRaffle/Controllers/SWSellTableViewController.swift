@@ -102,7 +102,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             }
             
             cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-            cell!.numberLabel.text = (raffle.maximumNumber - raffle.stock + 1).ticketNumberString()
+            cell!.numberLabel.text = raffle.isMarginRaffle == 0 ? ((raffle.maximumNumber - raffle.stock + 1).ticketNumberString()) : "No. ???"
             cell!.nameLabel.text = raffle.name
             cell!.descriptionLabel.text = raffle.description
             cell!.priceLabel.text = raffle.price.priceString()
@@ -152,7 +152,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 cell!.label.textColor = UIColor.orange
-                cell!.label.text = "Confirm"
+                cell!.label.text = "Sell"
             }
             
             return cell!
@@ -164,18 +164,18 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         
         if indexPath.section == 4 {
             if check() {
-            var soldTickets = Array<SWSoldTicket>.init()
-            for index in 0 ..< Int32(amount)! {
-                let ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
-                let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
-                let format = DateFormatter()
-                format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
-                soldTickets.append(SWSoldTicket.init(customerName: name, ticketNumber: ticketNumber, purchaseTime: format.string(from: now)))
-            }
-            let soldViewController = SWShareTableViewController.init(style: .grouped)
-            soldViewController.soldTickets = soldTickets
-            soldViewController.raffle = raffle
-            navigationController?.pushViewController(soldViewController, animated: true)
+                var soldTickets = Array<SWSoldTicket>.init()
+                for index in 0 ..< Int32(amount)! {
+                    let ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
+                    let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
+                    let format = DateFormatter()
+                    format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
+                    soldTickets.append(SWSoldTicket.init(customerName: name, ticketNumber: ticketNumber, purchaseTime: format.string(from: now)))
+                }
+                let soldViewController = SWShareTableViewController.init(style: .grouped)
+                soldViewController.soldTickets = soldTickets
+                soldViewController.raffle = raffle
+                navigationController?.pushViewController(soldViewController, animated: true)
             }
         }
     }

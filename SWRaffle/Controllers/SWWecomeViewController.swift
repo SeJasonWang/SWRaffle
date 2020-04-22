@@ -8,10 +8,14 @@
 
 import UIKit
 
+protocol SWWecomeViewControllerDelegate: NSObjectProtocol {
+    func didAddDefaultRaffle(_ raffle: SWRaffle)
+}
+
 class SWWecomeViewController: UIViewController {
 
-    var closure:(() -> ())?
-    
+    weak var delegate: SWWecomeViewControllerDelegate?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -97,9 +101,10 @@ class SWWecomeViewController: UIViewController {
     
     @objc private func continueButtonPressed() {
         dismiss(animated: true) {            
-            if self.closure != nil {
-                self.closure!()
-            }
+            let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
+            let stock = 100
+            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: Int32(stock), maximumNumber: Int32(stock), purchaseLimit: 1, description: "", wallpaperData: data, isMarginRaffle: 0, soldTickets:Array.init())
+            self.delegate?.didAddDefaultRaffle(raffle)
         }
     }
     

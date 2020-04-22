@@ -12,7 +12,10 @@ extension UIViewController {
     public func showAlert(_ message: String?) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
-        self.present(alert, animated: true, completion: nil)
+        
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 
@@ -21,7 +24,7 @@ extension Int32 {
         return self > 0 ? "No. " + String(self) : ""
     }
     public func stockString() -> String {
-        return self > 0 ? "Stock: " + String(self) : "Sold Out"
+        return "Stock: " + String(self)
     }
 }
 
@@ -35,7 +38,7 @@ extension Double {
     }
 }
 
-class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate, SWWinnerTableViewControllerDelegate {
+class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerDelegate, SWShareTableViewControllerDelegate, SWWinnerTableViewControllerDelegate, SWWecomeViewControllerDelegate {
     
     var raffles = [SWRaffle]()
     var currentRow = -1
@@ -100,23 +103,14 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
             winnerViewController.delegate = self
             winnerViewController.raffle = raffle
-            winnerViewController.ticket = raffle.soldTickets[Int(arc4random()) % raffle.soldTickets.count]
+            winnerViewController.ticket = raffle.soldTickets.randomElement()
             self.navigationController?.pushViewController(winnerViewController, animated: true)
         }
     }
     
     private func presentWecomeViewController() {
         let wecomeViewController = SWWecomeViewController.init()
-        
-        wecomeViewController.closure = {
-            let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
-            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: 1000, maximumNumber: 1000, purchaseLimit: 1, description: "", wallpaperData: data, isMarginRaffle: 0, soldTickets:Array.init())
-            let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-            database.insert(raffle: raffle)
-            self.raffles = database.selectAllRaffles()
-
-            self.tableView.insertRows(at: [IndexPath.init(row: 0, section: 0)], with: .automatic)
-        }
+        wecomeViewController.delegate = self
         
         self.present(wecomeViewController, animated: true, completion: nil)
     }
@@ -146,7 +140,11 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         let raffle = raffles[indexPath.row]
         cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-        cell!.numberLabel.text = raffle.isMarginRaffle == 0 ? (raffle.maximumNumber - raffle.stock + 1).ticketNumberString() : "No. ???"
+        if raffle.stock > 0 {
+            cell!.numberLabel.text = raffle.isMarginRaffle == 0 ? (raffle.maximumNumber - raffle.stock + 1).ticketNumberString() : "No. ???"
+        } else {
+            cell!.numberLabel.text = "Sold Out"
+        }
         cell!.nameLabel.text = raffle.name
         cell!.descriptionLabel.text = raffle.description
         cell!.priceLabel.text = raffle.price.priceString()
@@ -159,13 +157,18 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         
-        currentRow = indexPath.row
+        let raffle = raffles[indexPath.row]
 
-        let sellViewController = SWSellTableViewController.init(style: .grouped)
-        sellViewController.raffle = raffles[indexPath.row]
-        navigationController?.pushViewController(sellViewController, animated: true)
+        if raffle.stock > 0 {
+            currentRow = indexPath.row
+            
+            let sellViewController = SWSellTableViewController.init(style: .grouped)
+            sellViewController.raffle = raffle
+            navigationController?.pushViewController(sellViewController, animated: true)
+        } else {
+            showAlert("Sold out, please draw out a winner")
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -179,6 +182,15 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         return header
     }
             
+    // MARK: - SWWecomeViewControllerDelegate
+    
+    func didAddDefaultRaffle(_ raffle: SWRaffle) {
+
+        didAddRaffle(raffle)
+        
+        viewDidAppear(true)
+    }
+
     // MARK: - SWAddEditTableViewControllerDelegate & SWWinnerTableViewControllerDelegate
     
     func didAddRaffle(_ raffle: SWRaffle) {
