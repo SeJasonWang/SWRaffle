@@ -24,19 +24,19 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Pricate Methods
 
-    private func getRandomTicket(_ tickets: Array<SWTicket>) ->() ->SWTicket? {
+    private func randomTicketGenerator(_ tickets: Array<SWTicket>) ->() ->SWTicket? {
 
         var nums = [SWTicket]();
         for ticket in tickets {
             nums.append(ticket)
         }
 
-        func randomMan() -> SWTicket! {
+        func randomTicket() -> SWTicket! {
             let index = Int(arc4random_uniform(UInt32(nums.count)))
             return nums.remove(at: index)
         }
 
-        return randomMan
+        return randomTicket
     }
     
     private func check() -> Bool {
@@ -187,12 +187,13 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
                 let format = DateFormatter()
                 format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
 
+                let randomTicket = randomTicketGenerator(unsoldTickets)
                 for index in 0 ..< Int32(amount)! {
                     var soldTicket: SWTicket!
                     if raffle.isMarginRaffle == 0 {
                         soldTicket = unsoldTickets[Int(index)]
                     } else {
-                        soldTicket = unsoldTickets.randomElement()!
+                        soldTicket = randomTicket()
                     }
 
                     soldTicket.customerName = customerName
