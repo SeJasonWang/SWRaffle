@@ -18,6 +18,7 @@
 		964B5637244E9F9E0082417E /* SWShareTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B5636244E9F9E0082417E /* SWShareTableViewController.swift */; };
 		964B56392450343C0082417E /* SWWinnerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B56382450343C0082417E /* SWWinnerTableViewController.swift */; };
 		964B563B245144E50082417E /* SWTicket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B563A245144E50082417E /* SWTicket.swift */; };
+		964B563D2451A0AC0082417E /* SWButtonsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B563C2451A0AC0082417E /* SWButtonsTableViewCell.swift */; };
 		965A54ED244827CE001F3CD5 /* SWHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */; };
 		965A54F124482CF9001F3CD5 /* SQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */; };
 		965A54F724483ED5001F3CD5 /* SWRaffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A54F624483ED5001F3CD5 /* SWRaffle.swift */; };
@@ -43,6 +44,7 @@
 		964B5636244E9F9E0082417E /* SWShareTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWShareTableViewController.swift; sourceTree = "<group>"; };
 		964B56382450343C0082417E /* SWWinnerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWWinnerTableViewController.swift; sourceTree = "<group>"; };
 		964B563A245144E50082417E /* SWTicket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWTicket.swift; sourceTree = "<group>"; };
+		964B563C2451A0AC0082417E /* SWButtonsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWButtonsTableViewCell.swift; sourceTree = "<group>"; };
 		965A54EC244827CE001F3CD5 /* SWHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWHomeViewController.swift; sourceTree = "<group>"; };
 		965A54F024482CF9001F3CD5 /* SQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDatabase.swift; sourceTree = "<group>"; };
 		965A54F624483ED5001F3CD5 /* SWRaffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWRaffle.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				96A2C8612449FBDE00F09F5E /* SWTitleView.swift */,
 				96A2C863244A9BFF00F09F5E /* SWTextFieldTableViewCell.swift */,
 				96A2C865244AC7E200F09F5E /* SWButtonTableViewCell.swift */,
+				964B563C2451A0AC0082417E /* SWButtonsTableViewCell.swift */,
 				96A2C867244AC92000F09F5E /* SWWallpaperTableViewCell.swift */,
 				964B5626244C6E550082417E /* SWPaddingableLabel.swift */,
 				964B562A244D87120082417E /* SWClickableAreaButton.swift */,
@@ -211,6 +214,7 @@
 				964B5625244C3B250082417E /* SWWecomeViewController.swift in Sources */,
 				964B562F244D87FA0082417E /* SWSellTableViewController.swift in Sources */,
 				96D4749A2448491800085692 /* SWCustomer.swift in Sources */,
+				964B563D2451A0AC0082417E /* SWButtonsTableViewCell.swift in Sources */,
 				964B562B244D87120082417E /* SWClickableAreaButton.swift in Sources */,
 				964B563B245144E50082417E /* SWTicket.swift in Sources */,
 				96065BF824481CAF00E2AF13 /* AppDelegate.swift in Sources */,

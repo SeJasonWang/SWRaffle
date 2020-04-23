@@ -13,7 +13,8 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     var raffle: SWRaffle!
     var customerName: String! = ""
     var amount: String! = ""
-    
+    let customers = SQLiteDatabase(databaseName: "MyDatabase").selectAllCustomers()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,6 +56,11 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
         return true
     }
+    
+    @objc private func textButtonPressed(_ sender: UIButton) {
+        let cell: SWTextFieldTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 2)) as! SWTextFieldTableViewCell
+        cell.textField.text = sender.titleLabel?.text
+    }
 
     // MARK: - Table view data source
 
@@ -70,9 +76,19 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         if section == 0 {
             return 12
         } else if section == 1 {
-            return 25
+            if customers.count > 0 {
+                return 25
+            } else {
+                return 0
+            }
         } else if section == 4 {
             return 0
+        } else if section == 2 {
+            if customers.count > 0 {
+                return 15
+            } else {
+                return 25
+            }
         } else {
             return 15
         }
@@ -102,6 +118,8 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             return UIScreen.main.bounds.size.width / 2.5
         } else if indexPath.section == 4 {
             return 60
+        } else if indexPath.section == 1 {
+            return SWButtonsTableViewCell.contentHeight(customers)
         } else {
             return 44
         }
@@ -127,15 +145,16 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         } else if indexPath.section == 1 {
             
             // History Customers
-            let identifier = "UITableViewCell"
-            var cell = tableView.dequeueReusableCell(withIdentifier: identifier)
+            let identifier = "SWButtonsTableViewCell"
+            var cell: SWButtonsTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWButtonsTableViewCell
             if cell == nil {
-                cell = UITableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
+                cell = SWButtonsTableViewCell()
             }
             
-            cell!.textLabel?.font = UIFont.systemFont(ofSize: 16)
-            cell!.textLabel?.textColor = UIColor.red
-            cell!.textLabel?.text = "TODO..."
+            cell!.customers = customers
+            for textButton in cell!.textButtons {
+                textButton.addTarget(self, action: #selector(textButtonPressed(_:)), for: .touchUpInside)
+            }
             
             return cell!
             

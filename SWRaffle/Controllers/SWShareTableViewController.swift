@@ -130,6 +130,7 @@ class SWShareTableViewController: UITableViewController {
         if section == tickets.count - 1 {
             // Total price and Amount
             let footer = SWTitleView.init(bottom: 12)
+            footer.titleLabel.numberOfLines = 2
             footer.titleLabel.textColor = UIColor.red
             footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
             let amountStr = "Amount: " + String(tickets.count) + "\n"

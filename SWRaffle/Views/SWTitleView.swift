@@ -21,7 +21,7 @@ class SWTitleView: UIView {
         backgroundColor = UIColor.white
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.numberOfLines = 0
+        titleLabel.numberOfLines = 1
         titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
         titleLabel.textColor = UIColor.gray
         addSubview(titleLabel)

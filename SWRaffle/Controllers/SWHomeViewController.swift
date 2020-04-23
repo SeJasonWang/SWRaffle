@@ -50,6 +50,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     var margin: Int = 0
     var alertAction: UIAlertAction?
     
+    let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,7 +62,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         tableView.backgroundColor = UIColor.white
         tableView.separatorStyle = .none
         
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
         raffles = database.selectAllRaffles()
         
         if raffles.count == 0 {
@@ -98,8 +99,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         currentRow = row
         let raffle = raffles[row]
         
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-
         if raffle.maximumNumber == raffle.stock { // Edit
             let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
             editTableViewController.raffle = raffle
@@ -127,7 +126,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
                     winnerViewController.delegate = self
                     winnerViewController.raffle = raffle
                     
-                    let ticket = database.selectTicketBy(raffleID: raffle.ID, ticketNumber: Int32(self.margin))
+                    let ticket = self.database.selectTicketBy(raffleID: raffle.ID, ticketNumber: Int32(self.margin))
                     winnerViewController.ticket = ticket
                     self.margin = 0
                     
@@ -231,8 +230,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     
     func didAddRaffle(_ raffle: SWRaffle) {
         
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-
         // update RAFFLE table (Must insert first to get a raffleID)
         database.insert(raffle: raffle)
         raffles = database.selectAllRaffles()
@@ -248,8 +245,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     
     func didEditRaffle(_ raffle: SWRaffle) {
         
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-
         // update TICKET table
         let oldRaffle = raffles[currentRow]
         if oldRaffle.maximumNumber < raffle.maximumNumber {
@@ -271,8 +266,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     }
     
     func didDeleteRaffle(_ raffle: SWRaffle) {
-
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
                         
         // update TICKET table
         for index in 1...raffle.maximumNumber {
@@ -296,8 +289,6 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
     
     func didSellTickets(_ tickets: Array<SWTicket>) {
         
-        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-
         // update RAFFLE table
         var raffle = raffles[currentRow]
         raffle.stock -= Int32(tickets.count)
