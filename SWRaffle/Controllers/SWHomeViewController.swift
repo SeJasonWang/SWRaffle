@@ -309,6 +309,19 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
             database.update(ticket: ticket)
         }
         
+        // update Customer table
+        let customerName = tickets.first!.customerName
+        let purchaseTimes = tickets.count
+        
+        let customer = database.selectCustomerBy(name: customerName)
+        if customer == nil {
+            database.insert(customer: SWCustomer.init(name: customerName, purchaseTimes: Int32(purchaseTimes)))
+        } else {
+            database.update(customer: SWCustomer.init(name: customerName, purchaseTimes: customer!.purchaseTimes + Int32(purchaseTimes)))
+        }
+        
+        print(database.selectAllCustomers())
+        
         // update UI
         isReadyToReload = true
     }

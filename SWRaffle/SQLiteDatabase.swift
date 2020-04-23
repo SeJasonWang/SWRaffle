@@ -72,6 +72,7 @@ class SQLiteDatabase
         //e.g. createRaffleTable()
         createRaffleTable()
         createTicketTable()
+        createCustomerTable()
     }
     private func dropTables()
     {
@@ -79,6 +80,7 @@ class SQLiteDatabase
         //e.g. dropTable(tableName:"Raffle")
         dropTable(tableName:"Raffle")
         dropTable(tableName:"Ticket")
+        dropTable(tableName:"Customer")
     }
     
     /* --------------------------------*/
@@ -408,7 +410,7 @@ class SQLiteDatabase
     
     func selectRaffleBy(id:Int32) -> SWRaffle? {
         var result : SWRaffle?
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, tickets FROM Raffle WHERE id = ?"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle FROM Raffle WHERE id = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             result = SWRaffle(
@@ -543,4 +545,65 @@ class SQLiteDatabase
         })
         return result
     }
+    
+    // MARK: - Customer Table
+    func createCustomerTable() {
+        let createCustomersTableQuery = """
+            CREATE TABLE Customer (
+                Name CHAR(255),
+                PurchaseTimes INTEGER
+            );
+            """
+        
+        createTableWithQuery(createCustomersTableQuery, tableName: "Customer")
+    }
+    
+    func insert(customer:SWCustomer) {
+        let insertStatementQuery = "INSERT INTO Customer (Name, PurchaseTimes) VALUES (?, ?)"
+        insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
+            sqlite3_bind_text(insertStatement, 1, NSString(string:customer.name.trimmingCharacters(in: CharacterSet.whitespaces)).utf8String, -1, nil)
+            sqlite3_bind_int(insertStatement, 2, customer.purchaseTimes)
+        })
+    }
+        
+    func update(customer:SWCustomer) {
+        let updateStatementQuery = "UPDATE Customer set purchaseTimes = ? WHERE name = ?"
+        updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
+            sqlite3_bind_int(updateStatement, 1, customer.purchaseTimes)
+            sqlite3_bind_text(updateStatement, 2, NSString(string:customer.name.trimmingCharacters(in: CharacterSet.whitespaces)).utf8String, -1, nil)
+        })
+    }
+    
+    func selectAllCustomers() -> [SWCustomer] {
+        var result = [SWCustomer]()
+        let selectStatementQuery = "SELECT name, purchaseTimes FROM Customer"
+        
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            
+            //create a raffle object from each result
+            let customer = SWCustomer(
+                name: String(cString:sqlite3_column_text(row, 0)),
+                purchaseTimes: sqlite3_column_int(row, 1)
+                )
+            //add it to the result array
+            result.insert(customer, at: 0)
+        })
+        return result
+    }
+    
+    func selectCustomerBy(name:String) -> SWCustomer? {
+        var result : SWCustomer?
+        let selectStatementQuery = "SELECT name, purchaseTimes FROM Customer WHERE name = ?"
+        
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            result = SWCustomer(
+                name: String(cString:sqlite3_column_text(row, 0)),
+                purchaseTimes: sqlite3_column_int(row, 1)
+            )
+        }, bindingFunction: { (selectStatement) in
+            sqlite3_bind_text(selectStatement, 1, NSString(string:name.trimmingCharacters(in: CharacterSet.whitespaces)).utf8String, -1, nil)
+        })
+        return result
+    }
+
 }
