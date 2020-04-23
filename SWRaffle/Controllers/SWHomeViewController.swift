@@ -310,9 +310,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         } else {
             database.update(customer: SWCustomer.init(name: customerName, purchaseTimes: customer!.purchaseTimes + Int32(purchaseTimes)))
         }
-        
-        print(database.selectAllCustomers())
-        
+
         // update UI
         isReadyToReload = true
     }

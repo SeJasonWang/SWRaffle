@@ -21,10 +21,18 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         title = "Sell"
 
         tableView.separatorStyle = .none
+        
+        let tap = UITapGestureRecognizer(target:self, action:#selector(handleTap(sender:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
     }
 
     // MARK: - Pricate Methods
 
+    @objc private func handleTap(sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
     private func randomTicketGenerator(_ tickets: Array<SWTicket>) ->() ->SWTicket? {
 
         var nums = [SWTicket]();
@@ -231,7 +239,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == 3 {
+        if section >= 3 {
             return 20
         } else {
             return 0
@@ -240,13 +248,6 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return UIView.init()
-    }
-    
-    
-    // MARK: - UIScrollViewDelegate
-
-    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        view.endEditing(true)
     }
     
     // MARK: - UITextFieldDelegate
@@ -275,14 +276,4 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             amount = textField.text
         }
     }
-    
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
-//        self.tableView.scrollIndicatorInsets = self.tableView.contentInset
-//    }
-//            
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        self.tableView.contentInset = UIEdgeInsets.zero
-//        self.tableView.scrollIndicatorInsets = UIEdgeInsets.zero
-//    }
 }

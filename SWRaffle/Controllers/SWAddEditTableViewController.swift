@@ -49,10 +49,18 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
         navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Done", style: .done, target: self, action: #selector(doneButtonPressed))
 
         tableView.separatorStyle = .none
+        
+        let tap = UITapGestureRecognizer(target:self, action:#selector(handleTap(sender:)))
+        tap.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(tap)
     }
 
     // MARK: - Pricate Methods
-        
+
+    @objc private func handleTap(sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
+
     @objc func doneButtonPressed() {
         if check() {
             navigationController?.popViewController(animated: true)
@@ -243,7 +251,6 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        view.endEditing(true)
 
         if indexPath.section == 5 {
             let cell = tableView.cellForRow(at: indexPath)
@@ -326,12 +333,6 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return UIView.init()
-    }
-    
-    // MARK: - UIScrollViewDelegate
-
-    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        view.endEditing(true)
     }
     
     //MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
