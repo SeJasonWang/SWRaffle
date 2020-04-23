@@ -60,6 +60,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     @objc private func textButtonPressed(_ sender: UIButton) {
         let cell: SWTextFieldTableViewCell = tableView.cellForRow(at: IndexPath.init(row: 0, section: 2)) as! SWTextFieldTableViewCell
         cell.textField.text = sender.titleLabel?.text
+        customerName = sender.titleLabel?.text
     }
 
     // MARK: - Table view data source
