@@ -103,7 +103,7 @@ class SWWecomeViewController: UIViewController {
         dismiss(animated: true) {            
             let data = UIImage.init(named: "test")!.jpegData(compressionQuality: 0)!
             let stock = 100
-            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: Int32(stock), maximumNumber: Int32(stock), purchaseLimit: 1, description: "", wallpaperData: data, isMarginRaffle: 0, soldTickets:Array.init())
+            let raffle = SWRaffle.init(name: "My Raffle", price: 0, stock: Int32(stock), maximumNumber: Int32(stock), purchaseLimit: 0, description: "This is your raffle description", wallpaperData: data, isMarginRaffle: 0)
             self.delegate?.didAddDefaultRaffle(raffle)
         }
     }

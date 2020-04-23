@@ -18,6 +18,4 @@ public struct SWRaffle {
     var description:String
     var wallpaperData:Data
     var isMarginRaffle:Int32
-    
-    var soldTickets:Array<SWSoldTicket>
 }

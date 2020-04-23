@@ -98,7 +98,9 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         currentRow = row
         let raffle = raffles[row]
         
-        if raffle.soldTickets.count == 0 { // Edit
+        let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+
+        if raffle.maximumNumber == raffle.stock { // Edit
             let editTableViewController = SWAddEditTableViewController.init(style: .grouped)
             editTableViewController.raffle = raffle
             editTableViewController.delegate = self
@@ -108,7 +110,10 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
                 let winnerViewController = SWWinnerTableViewController.init(style: .grouped)
                 winnerViewController.delegate = self
                 winnerViewController.raffle = raffle
-                winnerViewController.ticket = raffle.soldTickets.randomElement()
+                
+                let soldTickets = database.selectAllTicketsBy(raffleID: raffle.ID, isSold: 1)
+                winnerViewController.ticket = soldTickets.randomElement()
+                
                 self.navigationController?.pushViewController(winnerViewController, animated: true)
             } else { // Margin Raffle
                 let alert = UIAlertController(title: nil, message: "Plase enter a margin:", preferredStyle: .alert)
@@ -122,12 +127,8 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
                     winnerViewController.delegate = self
                     winnerViewController.raffle = raffle
                     
-                    for soldTicket in raffle.soldTickets {
-                        if self.margin == soldTicket.ticketNumber {
-                            winnerViewController.ticket = soldTicket
-                            break;
-                        }
-                    }
+                    let ticket = database.selectTicketBy(raffleID: raffle.ID, ticketNumber: Int32(self.margin))
+                    winnerViewController.ticket = ticket
                     self.margin = 0
                     
                     self.navigationController?.pushViewController(winnerViewController, animated: true)
@@ -184,7 +185,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         cell!.priceLabel.text = raffle.price.priceString()
         cell!.stockLabel.text = raffle.stock.stockString()
         
-        let title = raffle.soldTickets.count == 0 ? "Edit" : "Draw"
+        let title = raffle.maximumNumber == raffle.stock ? "Edit" : "Draw"
         cell!.editButton.setTitle(title, for: .normal)
 
         return cell!
@@ -222,58 +223,94 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
 
         didAddRaffle(raffle)
         
-        viewDidAppear(true)
+        // Update UI manually
+        viewDidAppear(false)
     }
 
     // MARK: - SWAddEditTableViewControllerDelegate & SWWinnerTableViewControllerDelegate
     
     func didAddRaffle(_ raffle: SWRaffle) {
         
-        isReadyToInsert = true
-
-        raffles.insert(raffle, at: 0)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+
+        // update RAFFLE table (Must insert first to get a raffleID)
         database.insert(raffle: raffle)
         raffles = database.selectAllRaffles()
         
+        // update TICKET table
+        for index in 1...raffle.maximumNumber {
+            database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, customerName: "", isSold: 0, purchaseTime: ""))
+        }
+        
+        // update UI
+        isReadyToInsert = true
     }
     
     func didEditRaffle(_ raffle: SWRaffle) {
         
-        isReadyToReload = true
-        
-        raffles[currentRow] = raffle
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
-        database.update(raffle: raffle)
 
+        // update TICKET table
+        let oldRaffle = raffles[currentRow]
+        if oldRaffle.maximumNumber < raffle.maximumNumber {
+            for index in (oldRaffle.maximumNumber + 1)...raffle.maximumNumber { // adding
+                database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, customerName: "", isSold: 0, purchaseTime: ""))
+            }
+        } else if oldRaffle.maximumNumber > raffle.maximumNumber{
+            for index in (raffle.maximumNumber + 1)...oldRaffle.maximumNumber { // removing
+                database.delete(raffleID: raffle.ID, ticketNumber: index)
+            }
+        }
+        
+        // update RAFFLE table
+        database.update(raffle: raffle)
+        
+        // update UI
+        raffles[currentRow] = raffle
+        isReadyToReload = true
     }
     
     func didDeleteRaffle(_ raffle: SWRaffle) {
 
-        isReadyToDelete = true
-        
-        raffles.remove(at: currentRow)
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+                        
+        // update TICKET table
+        for index in 1...raffle.maximumNumber {
+            database.delete(raffleID: raffle.ID, ticketNumber: index)
+        }
+        
+        // update RAFFLE table
         database.delete(raffle: raffle)
         
+        // update UI
+        raffles.remove(at: currentRow)
         if raffles.count == 0 {
+            tableView.deleteRows(at: [IndexPath.init(row: currentRow, section: 0)], with: .automatic)
             presentWecomeViewController()
+        } else {
+            isReadyToDelete = true
         }
     }
     
     // MARK: - SWSellTableViewControllerDelegate
     
-    func didSellTickets(_ soldTickets: Array<SWSoldTicket>) {
-        
-        isReadyToReload = true
-
-        var raffle = raffles[currentRow]
-        raffle.soldTickets += soldTickets
-        raffle.stock -= Int32(soldTickets.count)
-        raffles[currentRow] = raffle
+    func didSellTickets(_ tickets: Array<SWTicket>) {
         
         let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+
+        // update RAFFLE table
+        var raffle = raffles[currentRow]
+        raffle.stock -= Int32(tickets.count)
+        raffles[currentRow] = raffle
         database.update(raffle: raffle)
+        
+        // update TICKET table
+        for ticket in tickets {
+            database.update(ticket: ticket)
+        }
+        
+        // update UI
+        isReadyToReload = true
     }
 
     // MARK: - UITextFieldDelegate

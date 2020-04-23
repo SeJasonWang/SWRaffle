@@ -11,7 +11,7 @@ import UIKit
 class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
     var raffle: SWRaffle!
-    var name: String! = ""
+    var customerName: String! = ""
     var amount: String! = ""
     
     override func viewDidLoad() {
@@ -24,20 +24,14 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Pricate Methods
 
-    private func getRandomTicketNumber(_ soldTickets: Array<SWSoldTicket>, _ maximumNumber: Int) ->() ->Int? {
+    private func getRandomTicket(_ tickets: Array<SWTicket>) ->() ->SWTicket? {
 
-        var nums = [Int]();
-        for i in 1 ... maximumNumber {
-            nums.append(i)
-            for soldTicket in soldTickets {
-                if i == soldTicket.ticketNumber {
-                    nums.removeLast()
-                    break
-                }
-            }
+        var nums = [SWTicket]();
+        for ticket in tickets {
+            nums.append(ticket)
         }
 
-        func randomMan() -> Int! {
+        func randomMan() -> SWTicket! {
             let index = Int(arc4random_uniform(UInt32(nums.count)))
             return nums.remove(at: index)
         }
@@ -47,7 +41,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     
     private func check() -> Bool {
 
-        if name.count == 0 {
+        if customerName.count == 0 {
             showAlert("Please enter a customer's name.")
             return false
         } else if amount.count == 0 {
@@ -185,24 +179,30 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         
         if indexPath.section == 4 {
             if check() {
-                var soldTickets = Array<SWSoldTicket>.init()
-                let randomTicketNumber = getRandomTicketNumber(raffle.soldTickets, Int(raffle.maximumNumber))
+                let database : SQLiteDatabase = SQLiteDatabase(databaseName: "MyDatabase")
+                let unsoldTickets = database.selectAllTicketsBy(raffleID: raffle.ID, isSold: 0)
+                var soldTickets = Array<SWTicket>.init()
+                
+                let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
+                let format = DateFormatter()
+                format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
 
                 for index in 0 ..< Int32(amount)! {
-                    let ticketNumber: Int32
+                    var soldTicket: SWTicket!
                     if raffle.isMarginRaffle == 0 {
-                        ticketNumber = raffle.maximumNumber - raffle.stock + 1 + index
+                        soldTicket = unsoldTickets[Int(index)]
                     } else {
-                        ticketNumber = Int32(randomTicketNumber()!)
+                        soldTicket = unsoldTickets.randomElement()!
                     }
-                    print("生成票号: " + String(ticketNumber))
-                    let now = Date().addingTimeInterval(TimeInterval(NSTimeZone.system.secondsFromGMT()))
-                    let format = DateFormatter()
-                    format.dateFormat = "yyyy-MM-dd aaa hh:mm:ss"
-                    soldTickets.append(SWSoldTicket.init(customerName: name, ticketNumber: ticketNumber, purchaseTime: format.string(from: now)))
+
+                    soldTicket.customerName = customerName
+                    soldTicket.isSold = 1
+                    soldTicket.purchaseTime = format.string(from: now)
+                    soldTickets.append(soldTicket)
                 }
+
                 let soldViewController = SWShareTableViewController.init(style: .grouped)
-                soldViewController.soldTickets = soldTickets
+                soldViewController.tickets = soldTickets
                 soldViewController.raffle = raffle
                 navigationController?.pushViewController(soldViewController, animated: true)
             }
@@ -249,7 +249,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
         let section = tableView.indexPath(for: textFieldCell)?.section
                 
         if section == 2 {
-            name = textField.text
+            customerName = textField.text
         } else {
             amount = textField.text
         }

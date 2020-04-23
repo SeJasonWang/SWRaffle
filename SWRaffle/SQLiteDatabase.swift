@@ -71,12 +71,14 @@ class SQLiteDatabase
         //INSERT YOUR createTable function calls here
         //e.g. createRaffleTable()
         createRaffleTable()
+        createTicketTable()
     }
     private func dropTables()
     {
         //INSERT YOUR dropTable function calls here
         //e.g. dropTable(tableName:"Raffle")
         dropTable(tableName:"Raffle")
+        dropTable(tableName:"Ticket")
     }
     
     /* --------------------------------*/
@@ -325,6 +327,7 @@ class SQLiteDatabase
     /* --- ADD YOUR TABLES ETC HERE ---*/
     /* --------------------------------*/
     
+    // MARK: - Raffle Table
     func createRaffleTable() {
         let createRafflesTableQuery = """
             CREATE TABLE Raffle (
@@ -336,8 +339,7 @@ class SQLiteDatabase
                 PurchaseLimit INTEGER,
                 Description CHAR(255),
                 Wallpaper MEDIUMTEXT,
-                IsMarginRaffle INTEGER,
-                SoldTickets TEXT
+                IsMarginRaffle INTEGER
             );
             """
         
@@ -345,7 +347,7 @@ class SQLiteDatabase
     }
     
     func insert(raffle:SWRaffle) {
-        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper, IsMarginRaffle, SoldTickets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        let insertStatementQuery = "INSERT INTO Raffle (Name, Price, Stock, MaximumNumber, PurchaseLimit, Description, Wallpaper, IsMarginRaffle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
             sqlite3_bind_text(insertStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(insertStatement, 2, raffle.price)
@@ -355,7 +357,6 @@ class SQLiteDatabase
             sqlite3_bind_text(insertStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(insertStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
             sqlite3_bind_int(insertStatement, 8, raffle.isMarginRaffle)
-            sqlite3_bind_text(insertStatement, 9, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
         })
     }
     
@@ -367,7 +368,7 @@ class SQLiteDatabase
     }
     
     func update(raffle:SWRaffle) {
-        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ?, isMarginRaffle = ?, soldTickets = ? WHERE id = ?"
+        let updateStatementQuery = "UPDATE Raffle set name = ?, price = ?, stock = ?, maximumNumber = ?, purchaseLimit = ?, description = ?, wallpaper = ?, isMarginRaffle = ? WHERE id = ?"
         updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
             sqlite3_bind_text(updateStatement, 1, NSString(string:raffle.name).utf8String, -1, nil)
             sqlite3_bind_double(updateStatement, 2, raffle.price)
@@ -377,14 +378,13 @@ class SQLiteDatabase
             sqlite3_bind_text(updateStatement, 6, NSString(string:raffle.description).utf8String, -1, nil)
             sqlite3_bind_text(updateStatement, 7, NSString(string:raffle.wallpaperData.base64EncodedString()).utf8String, -1, nil)
             sqlite3_bind_int(updateStatement, 8, raffle.isMarginRaffle)
-            sqlite3_bind_text(updateStatement, 9, getJSONStringFromSoldTickets(raffle.soldTickets), -1, nil)
-            sqlite3_bind_int(updateStatement, 10, raffle.ID)
+            sqlite3_bind_int(updateStatement, 9, raffle.ID)
         })
     }
     
     func selectAllRaffles() -> [SWRaffle] {
         var result = [SWRaffle]()
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, soldTickets FROM Raffle"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle FROM Raffle"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             
@@ -398,8 +398,7 @@ class SQLiteDatabase
                 purchaseLimit: sqlite3_column_int(row, 5),
                 description: String(cString:sqlite3_column_text(row, 6)),
                 wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
-                isMarginRaffle: sqlite3_column_int(row, 8),
-                soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 9))))
+                isMarginRaffle: sqlite3_column_int(row, 8)
                 )
             //add it to the result array
             result.insert(raffle, at: 0)
@@ -409,95 +408,139 @@ class SQLiteDatabase
     
     func selectRaffleBy(id:Int32) -> SWRaffle? {
         var result : SWRaffle?
-        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, soldTickets FROM Raffle WHERE id = ?"
+        let selectStatementQuery = "SELECT id, name, price, stock, maximumNumber, purchaseLimit, description, wallpaper, isMarginRaffle, tickets FROM Raffle WHERE id = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
-//            if sqlite3_column_int(row, 0) == id {
-                result = SWRaffle(
-                    ID: id,
-                    name: String(cString:sqlite3_column_text(row, 1)),
-                    price: sqlite3_column_double(row, 2),
-                    stock: sqlite3_column_int(row, 3),
-                    maximumNumber: sqlite3_column_int(row, 4),
-                    purchaseLimit: sqlite3_column_int(row, 5),
-                    description: String(cString:sqlite3_column_text(row, 6)),
-                    wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
-                    isMarginRaffle: sqlite3_column_int(row, 8),
-                    soldTickets: getSoldTicketsFromJSONString((String(cString:sqlite3_column_text(row, 9))))
-                )
-//            }
+            result = SWRaffle(
+                ID: id,
+                name: String(cString:sqlite3_column_text(row, 1)),
+                price: sqlite3_column_double(row, 2),
+                stock: sqlite3_column_int(row, 3),
+                maximumNumber: sqlite3_column_int(row, 4),
+                purchaseLimit: sqlite3_column_int(row, 5),
+                description: String(cString:sqlite3_column_text(row, 6)),
+                wallpaperData: Data(base64Encoded: String(cString:sqlite3_column_text(row, 7)), options: .ignoreUnknownCharacters)!,
+                isMarginRaffle: sqlite3_column_int(row, 8)
+            )
         }, bindingFunction: { (selectStatement) in
             sqlite3_bind_int(selectStatement, 1, id)
         })
         return result
     }
     
-    func getSoldTicketsFromJSONString(_ jsonString:String) ->Array<SWSoldTicket> {
-        var soldTickets = Array<SWSoldTicket>.init()
-        let array = getArrayFromJSONString(jsonString)
-        for str in array {
-            let dic = getDictionaryFromJSONString(jsonString: str)
-            let soldTicket = SWSoldTicket.init(customerName: dic["customerName"] as! String,
-                                               ticketNumber: Int32(dic["ticketNumber"] as! String)!,
-                                               purchaseTime: dic["purchaseTime"] as! String)
-            soldTickets.append(soldTicket)
-        }
-        return soldTickets
+    // MARK: - Ticket Table
+    
+    func createTicketTable() {
+        let createTicketsTableQuery = """
+            CREATE TABLE Ticket (
+                RaffleID INTEGER,
+                TicketNumber INTEGER,
+                CustomerName CHAR(255),
+                IsSold INTEGER,
+                PurchaseTime CHAR(255)
+            );
+            """
+        
+        createTableWithQuery(createTicketsTableQuery, tableName: "Ticket")
     }
     
-    func getJSONStringFromSoldTickets(_ array:Array<SWSoldTicket>) -> String {
-        var dicArray = Array<String>.init()
-        for soldTicket in array {
-            let dic = ["customerName" : soldTicket.customerName,
-                       "ticketNumber" : String(soldTicket.ticketNumber),
-                       "purchaseTime" : soldTicket.purchaseTime]
-            dicArray.append(getJSONStringFromDictionary(dictionary: dic as NSDictionary))
-        }
-        return getJSONStringFromArray(dicArray)
+    // for creating a raffle
+    func insert(ticket:SWTicket) {
+        let insertStatementQuery = "INSERT INTO Ticket (RaffleID, TicketNumber, CustomerName, IsSold, PurchaseTime) VALUES (?, ?, ?, ?, ?)"
+        insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
+            sqlite3_bind_int(insertStatement, 1, ticket.raffleID)
+            sqlite3_bind_int(insertStatement, 2, ticket.ticketNumber)
+            sqlite3_bind_text(insertStatement, 3, NSString(string:ticket.customerName).utf8String, -1, nil)
+            sqlite3_bind_int(insertStatement, 4, ticket.isSold)
+            sqlite3_bind_text(insertStatement, 5, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
+        })
     }
     
-    func getArrayFromJSONString(_ jsonString:String) ->Array<String> {
+    // for deleting a raffle
+    func delete(raffleID:Int32, ticketNumber:Int32) {
+        let deleteStatementQuery = "DELETE FROM Ticket WHERE raffleID = ? AND ticketNumber = ?"
+        deleteWithQuery(deleteStatementQuery, bindingFunction: { (deleteStatement) in
+            sqlite3_bind_int(deleteStatement, 1, raffleID)
+            sqlite3_bind_int(deleteStatement, 2, ticketNumber)
+        })
+    }
+          
+    // for selling tickets
+    func update(ticket:SWTicket) {
+        let updateStatementQuery = "UPDATE Ticket set raffleID = ?, ticketNumber = ?, customerName = ?, isSold = ?, purchaseTime = ? WHERE raffleID = ? AND ticketNumber = ?"
+        updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
+            sqlite3_bind_int(updateStatement, 1, ticket.raffleID)
+            sqlite3_bind_int(updateStatement, 2, ticket.ticketNumber)
+            sqlite3_bind_text(updateStatement, 3, NSString(string:ticket.customerName).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 4, ticket.isSold)
+            sqlite3_bind_text(updateStatement, 5, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 6, ticket.raffleID)
+            sqlite3_bind_int(updateStatement, 7, ticket.ticketNumber)
+        })
+    }
+    
+    // unused
+    func selectAllTickets() -> [SWTicket] {
+        var result = [SWTicket]()
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket"
         
-        let jsonData:Data = jsonString.data(using: .utf8)!
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            
+            //create a ticket object from each result
+            let ticket = SWTicket(
+                raffleID: sqlite3_column_int(row, 0),
+                ticketNumber: sqlite3_column_int(row, 1),
+                customerName: String(cString:sqlite3_column_text(row, 2)),
+                isSold: sqlite3_column_int(row, 3),
+                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+                )
+            //add it to the result array
+            result.append(ticket)
+        })
+        return result
+    }
         
-        let array = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
-        if array != nil {
-            return array as! Array<String>
-        }
-        return Array()
+    // for selling tickets & drawing the winner from a normal raffle
+    func selectAllTicketsBy(raffleID:Int32, isSold:Int32) -> [SWTicket] {
+        var result = [SWTicket]()
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND isSold = ?"
+        
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            
+            //create a ticket object from each result
+            let ticket = SWTicket(
+                raffleID: sqlite3_column_int(row, 0),
+                ticketNumber: sqlite3_column_int(row, 1),
+                customerName: String(cString:sqlite3_column_text(row, 2)),
+                isSold: sqlite3_column_int(row, 3),
+                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+                )
+            //add it to the result array
+            result.append(ticket)
+        }, bindingFunction: { (selectStatement) in
+            sqlite3_bind_int(selectStatement, 1, raffleID)
+            sqlite3_bind_int(selectStatement, 2, isSold)
+        })
+        return result
     }
 
-    func getJSONStringFromArray(_ array:Array<String>) -> String {
+    // for drawing the winner from a margin raffle
+    func selectTicketBy(raffleID:Int32, ticketNumber:Int32) -> SWTicket? {
+        var result : SWTicket?
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND ticketNumber = ?"
         
-        if (!JSONSerialization.isValidJSONObject(array)) {
-            print("无法解析出JSONString")
-            return ""
-        }
-        
-        let data : NSData! = try? JSONSerialization.data(withJSONObject: array, options: []) as NSData
-        let JSONString = NSString(data:data as Data,encoding: String.Encoding.utf8.rawValue)
-        return JSONString! as String
-    }
-    
-    func getDictionaryFromJSONString(jsonString:String) ->NSDictionary {
-        
-        let jsonData:Data = jsonString.data(using: .utf8)!
-        
-        let dict = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
-        if dict != nil {
-            return dict as! NSDictionary
-        }
-        return NSDictionary()
-    }
-    
-    func getJSONStringFromDictionary(dictionary:NSDictionary) -> String {
-        if (!JSONSerialization.isValidJSONObject(dictionary)) {
-            print("无法解析出JSONString")
-            return ""
-        }
-        let data : NSData! = try? JSONSerialization.data(withJSONObject: dictionary, options: []) as NSData
-        
-        let JSONString = NSString(data:data as Data,encoding: String.Encoding.utf8.rawValue)
-        return JSONString! as String
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            result = SWTicket(
+                raffleID: sqlite3_column_int(row, 0),
+                ticketNumber: sqlite3_column_int(row, 1),
+                customerName: String(cString:sqlite3_column_text(row, 2)),
+                isSold: sqlite3_column_int(row, 3),
+                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+            )
+        }, bindingFunction: { (selectStatement) in
+            sqlite3_bind_int(selectStatement, 1, raffleID)
+            sqlite3_bind_int(selectStatement, 2, ticketNumber)
+        })
+        return result
     }
 }

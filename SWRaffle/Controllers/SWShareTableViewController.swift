@@ -9,14 +9,14 @@
 import UIKit
 
 protocol SWShareTableViewControllerDelegate: NSObjectProtocol {
-    func didSellTickets(_ soldTickets: Array<SWSoldTicket>)
+    func didSellTickets(_ tickets: Array<SWTicket>)
 }
 
 class SWShareTableViewController: UITableViewController {
 
     weak var delegate: SWShareTableViewControllerDelegate?
 
-    var soldTickets: Array<SWSoldTicket>!
+    var tickets: Array<SWTicket>!
     var raffle: SWRaffle!
 
     override func viewDidLoad() {
@@ -32,7 +32,7 @@ class SWShareTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return soldTickets.count + 1
+        return tickets.count + 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,7 +40,7 @@ class SWShareTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section < soldTickets.count {
+        if indexPath.section < tickets.count {
             return UIScreen.main.bounds.size.width / 2.5
         } else {
             return 60
@@ -48,7 +48,7 @@ class SWShareTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section < soldTickets.count {
+        if indexPath.section < tickets.count {
             let identifier = "SWWallpaperTableViewCell"
             var cell: SWWallpaperTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWWallpaperTableViewCell
             if cell == nil {
@@ -56,13 +56,13 @@ class SWShareTableViewController: UITableViewController {
                 cell!.editButton.isHidden = true
             }
             
-            let soldTicket = soldTickets[indexPath.section]
+            let ticket = tickets[indexPath.section]
             cell!.wallpaperView.image = UIImage.init(data: raffle.wallpaperData)
-            cell!.numberLabel.text = "No. " + String(soldTicket.ticketNumber)
+            cell!.numberLabel.text = ticket.ticketNumber.ticketNumberString()
             cell!.nameLabel.text = raffle.name
             cell!.descriptionLabel.text = raffle.description
             cell!.priceLabel.text = raffle.price.priceString()
-            cell!.stockLabel.text = soldTicket.customerName
+            cell!.stockLabel.text = ticket.customerName
             
             return cell!
         } else {
@@ -81,9 +81,9 @@ class SWShareTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.section == soldTickets.count {
+        if indexPath.section == tickets.count {
             navigationController?.popToRootViewController(animated: true)
-            delegate?.didSellTickets(soldTickets)
+            delegate?.didSellTickets(tickets)
         }
     }
 
@@ -91,7 +91,7 @@ class SWShareTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 25
-        } else if section == soldTickets.count {
+        } else if section == tickets.count {
             return 20
         } else {
             return 0
@@ -109,7 +109,7 @@ class SWShareTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        if section == soldTickets.count {
+        if section == tickets.count {
             view.backgroundColor = UIColor.clear
         } else {
             view.backgroundColor = UIColor.white
@@ -117,9 +117,9 @@ class SWShareTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section < soldTickets.count - 1 {
+        if section < tickets.count - 1 {
             return 12
-        } else if section == soldTickets.count - 1 {
+        } else if section == tickets.count - 1 {
             return 62.5
         } else {
             return 20
@@ -127,13 +127,13 @@ class SWShareTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == soldTickets.count - 1 {
+        if section == tickets.count - 1 {
             // Total price and Amount
             let footer = SWTitleView.init(bottom: 12)
             footer.titleLabel.textColor = UIColor.red
             footer.titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-            let amountStr = "Amount: " + String(soldTickets.count) + "\n"
-            let totalPriceStr = "Total Price: " + (raffle.price * Double(soldTickets.count)).priceString()
+            let amountStr = "Amount: " + String(tickets.count) + "\n"
+            let totalPriceStr = "Total Price: " + (raffle.price * Double(tickets.count)).priceString()
             footer.titleLabel.text = amountStr + totalPriceStr
             return footer
         } else {
@@ -142,7 +142,7 @@ class SWShareTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        if section < soldTickets.count {
+        if section < tickets.count {
             view.backgroundColor = UIColor.white
         } else {
             view.backgroundColor = UIColor.clear

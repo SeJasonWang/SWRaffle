@@ -95,12 +95,11 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                                    purchaseLimit: (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!,
                                    description: descriptionStr,
                                    wallpaperData: wallpaperImage!.jpegData(compressionQuality: 0)!,
-                                   isMarginRaffle: isMarginRaffle,
-                                   soldTickets: Array.init())
+                                   isMarginRaffle: isMarginRaffle)
         } else { // Edit
             raffle!.name = name
             raffle!.price = Double(price)!
-            raffle!.maximumNumber += (Int32(stock)! - raffle!.stock) // uplate the maximumNumber after editing the current stock
+            raffle!.maximumNumber = Int32(stock)!
             raffle!.stock = Int32(stock)!
             raffle!.purchaseLimit = (purchaseLimit.count == 0) ? 0 : Int32(purchaseLimit)!
             raffle!.description = descriptionStr!
@@ -272,26 +271,15 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
                 present(pickerCamera, animated: true, completion: nil)
             }
         } else if indexPath.section == 7 {
-            
-            if raffle!.soldTickets.count > 0 {
-                
-                let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+            let alert = UIAlertController(title: nil, message: "Are you sure you want to delete \"" + raffle!.name + "\"?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
 
-                    self.navigationController?.popViewController(animated: true)
-                    self.delegate?.didDeleteRaffle(self.raffle!)
+                self.navigationController?.popViewController(animated: true)
+                self.delegate?.didDeleteRaffle(self.raffle!)
 
-                }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                present(alert, animated: true)
-
-            } else {
-                
-                let alert = UIAlertController(title: nil, message: "\"" + raffle!.name + "\"" + " has sold tickets and cannot be deleted", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                present(alert, animated: true)
-
-            }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alert, animated: true)
         }
     }
 
