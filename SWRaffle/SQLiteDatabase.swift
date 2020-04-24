@@ -335,7 +335,7 @@ class SQLiteDatabase
             CREATE TABLE Raffle (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 Name CHAR(255),
-                Price INTEGER,
+                Price REAL,
                 Stock INTEGER,
                 MaximumNumber INTEGER,
                 PurchaseLimit INTEGER,
@@ -437,6 +437,7 @@ class SQLiteDatabase
             CREATE TABLE Ticket (
                 RaffleID INTEGER,
                 TicketNumber INTEGER,
+                TicketPrice REAL,
                 CustomerName CHAR(255),
                 IsSold INTEGER,
                 PurchaseTime CHAR(255)
@@ -448,13 +449,14 @@ class SQLiteDatabase
     
     // for creating a raffle
     func insert(ticket:SWTicket) {
-        let insertStatementQuery = "INSERT INTO Ticket (RaffleID, TicketNumber, CustomerName, IsSold, PurchaseTime) VALUES (?, ?, ?, ?, ?)"
+        let insertStatementQuery = "INSERT INTO Ticket (RaffleID, TicketNumber, TicketPrice, CustomerName, IsSold, PurchaseTime) VALUES (?, ?, ?, ?, ?, ?)"
         insertWithQuery(insertStatementQuery, bindingFunction: { (insertStatement) in
             sqlite3_bind_int(insertStatement, 1, ticket.raffleID)
             sqlite3_bind_int(insertStatement, 2, ticket.ticketNumber)
-            sqlite3_bind_text(insertStatement, 3, NSString(string:ticket.customerName).utf8String, -1, nil)
-            sqlite3_bind_int(insertStatement, 4, ticket.isSold)
-            sqlite3_bind_text(insertStatement, 5, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
+            sqlite3_bind_double(insertStatement, 3, ticket.ticketPrice)
+            sqlite3_bind_text(insertStatement, 4, NSString(string:ticket.customerName).utf8String, -1, nil)
+            sqlite3_bind_int(insertStatement, 5, ticket.isSold)
+            sqlite3_bind_text(insertStatement, 6, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
         })
     }
     
@@ -469,22 +471,20 @@ class SQLiteDatabase
           
     // for selling tickets
     func update(ticket:SWTicket) {
-        let updateStatementQuery = "UPDATE Ticket set raffleID = ?, ticketNumber = ?, customerName = ?, isSold = ?, purchaseTime = ? WHERE raffleID = ? AND ticketNumber = ?"
+        let updateStatementQuery = "UPDATE Ticket set customerName = ?, isSold = ?, purchaseTime = ? WHERE raffleID = ? AND ticketNumber = ?"
         updateWithQuery(updateStatementQuery, bindingFunction: { (updateStatement) in
-            sqlite3_bind_int(updateStatement, 1, ticket.raffleID)
-            sqlite3_bind_int(updateStatement, 2, ticket.ticketNumber)
-            sqlite3_bind_text(updateStatement, 3, NSString(string:ticket.customerName).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 4, ticket.isSold)
-            sqlite3_bind_text(updateStatement, 5, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
-            sqlite3_bind_int(updateStatement, 6, ticket.raffleID)
-            sqlite3_bind_int(updateStatement, 7, ticket.ticketNumber)
+            sqlite3_bind_text(updateStatement, 1, NSString(string:ticket.customerName).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 2, ticket.isSold)
+            sqlite3_bind_text(updateStatement, 3, NSString(string:ticket.purchaseTime).utf8String, -1, nil)
+            sqlite3_bind_int(updateStatement, 4, ticket.raffleID)
+            sqlite3_bind_int(updateStatement, 5, ticket.ticketNumber)
         })
     }
     
     // unused
     func selectAllTickets() -> [SWTicket] {
         var result = [SWTicket]()
-        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket"
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, ticketPrice, customerName, isSold, purchaseTime FROM Ticket"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             
@@ -492,9 +492,10 @@ class SQLiteDatabase
             let ticket = SWTicket(
                 raffleID: sqlite3_column_int(row, 0),
                 ticketNumber: sqlite3_column_int(row, 1),
-                customerName: String(cString:sqlite3_column_text(row, 2)),
-                isSold: sqlite3_column_int(row, 3),
-                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+                ticketPrice: sqlite3_column_double(row, 2),
+                customerName: String(cString:sqlite3_column_text(row, 3)),
+                isSold: sqlite3_column_int(row, 4),
+                purchaseTime: String(cString:sqlite3_column_text(row, 5))
                 )
             //add it to the result array
             result.append(ticket)
@@ -505,7 +506,7 @@ class SQLiteDatabase
     // for selling tickets & drawing the winner from a normal raffle
     func selectAllTicketsBy(raffleID:Int32, isSold:Int32) -> [SWTicket] {
         var result = [SWTicket]()
-        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND isSold = ?"
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, ticketPrice, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND isSold = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             
@@ -513,9 +514,10 @@ class SQLiteDatabase
             let ticket = SWTicket(
                 raffleID: sqlite3_column_int(row, 0),
                 ticketNumber: sqlite3_column_int(row, 1),
-                customerName: String(cString:sqlite3_column_text(row, 2)),
-                isSold: sqlite3_column_int(row, 3),
-                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+                ticketPrice: sqlite3_column_double(row, 2),
+                customerName: String(cString:sqlite3_column_text(row, 3)),
+                isSold: sqlite3_column_int(row, 4),
+                purchaseTime: String(cString:sqlite3_column_text(row, 5))
                 )
             //add it to the result array
             result.append(ticket)
@@ -529,15 +531,16 @@ class SQLiteDatabase
     // for drawing the winner from a margin raffle
     func selectTicketBy(raffleID:Int32, ticketNumber:Int32) -> SWTicket? {
         var result : SWTicket?
-        let selectStatementQuery = "SELECT raffleID, ticketNumber, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND ticketNumber = ?"
+        let selectStatementQuery = "SELECT raffleID, ticketNumber, ticketPrice, customerName, isSold, purchaseTime FROM Ticket WHERE raffleID = ? AND ticketNumber = ?"
         
         selectWithQuery(selectStatementQuery, eachRow: { (row) in
             result = SWTicket(
                 raffleID: sqlite3_column_int(row, 0),
                 ticketNumber: sqlite3_column_int(row, 1),
-                customerName: String(cString:sqlite3_column_text(row, 2)),
-                isSold: sqlite3_column_int(row, 3),
-                purchaseTime: String(cString:sqlite3_column_text(row, 4))
+                ticketPrice: sqlite3_column_double(row, 2),
+                customerName: String(cString:sqlite3_column_text(row, 3)),
+                isSold: sqlite3_column_int(row, 4),
+                purchaseTime: String(cString:sqlite3_column_text(row, 5))
             )
         }, bindingFunction: { (selectStatement) in
             sqlite3_bind_int(selectStatement, 1, raffleID)

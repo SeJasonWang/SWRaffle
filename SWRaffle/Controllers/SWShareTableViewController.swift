@@ -7,12 +7,31 @@
 //
 
 import UIKit
+import MessageUI
 
 protocol SWShareTableViewControllerDelegate: NSObjectProtocol {
     func didSellTickets(_ tickets: Array<SWTicket>)
 }
 
-class SWShareTableViewController: UITableViewController {
+// Lindsay Wells, Ticket 001, $5.00, Purchased 31/03/2020
+extension Array where Iterator.Element == SWTicket {
+    public func ticketsText() -> String {
+        var text: String = ""
+        for index in 0 ..< self.count {
+            let ticket = self[index]
+            text.append(ticket.customerName + ", Ticket No. ")
+            text.append(String(ticket.ticketNumber) + ", ")
+            text.append(ticket.ticketPrice.priceString() + ", Purchased ")
+            text.append(ticket.purchaseTime)
+            if index < self.count - 1 {
+                text.append("\n")
+            }
+        }
+        return text
+    }
+}
+
+class SWShareTableViewController: UITableViewController, MFMessageComposeViewControllerDelegate {
 
     weak var delegate: SWShareTableViewControllerDelegate?
 
@@ -24,9 +43,24 @@ class SWShareTableViewController: UITableViewController {
 
         self.delegate = navigationController?.viewControllers.first as? SWShareTableViewControllerDelegate
         
-        title = "Share"
+        title = "Tickets"
 
         tableView.separatorStyle = .none
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Share", style: .done, target: self, action: #selector(shareButtonPressed))
+    }
+    
+    // MARK: - Private
+    
+    @objc private func shareButtonPressed() {
+        if MFMessageComposeViewController.canSendText() {
+            let controller = MFMessageComposeViewController()
+            controller.body = self.tickets.ticketsText()
+            controller.messageComposeDelegate = self
+            self.present(controller, animated: true, completion: nil)
+        } else {
+            self.showAlert("This device cannot send text messages.")
+        }
     }
 
     // MARK: - Table view data source
@@ -70,7 +104,7 @@ class SWShareTableViewController: UITableViewController {
             var cell: SWButtonTableViewCell? = tableView.dequeueReusableCell(withIdentifier: identifier) as? SWButtonTableViewCell
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
-                cell!.label.text = "Submit and Share tickets"
+                cell!.label.text = "Submit"
                 cell!.label.textColor = UIColor.orange
             }
             
@@ -148,5 +182,19 @@ class SWShareTableViewController: UITableViewController {
         } else {
             view.backgroundColor = UIColor.clear
         }
+    }
+    
+    // MARK: - MFMessageComposeViewControllerDelegate
+    
+    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+        switch result {
+        case .sent:
+            showAlert("Share Success.")
+        case .failed:
+            showAlert("Share failed.")
+        default:
+            break
+        }
+        controller.dismiss(animated: true, completion: nil)
     }
 }

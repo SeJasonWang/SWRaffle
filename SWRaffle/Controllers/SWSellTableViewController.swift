@@ -195,7 +195,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
             if cell == nil {
                 cell = SWButtonTableViewCell(style:UITableViewCell.CellStyle.subtitle, reuseIdentifier: identifier)
                 cell!.label.textColor = UIColor.orange
-                cell!.label.text = "Sell"
+                cell!.label.text = "Confirm"
             }
             
             return cell!

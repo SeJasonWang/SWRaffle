@@ -236,7 +236,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         
         // update TICKET table
         for index in 1...raffle.maximumNumber {
-            database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, customerName: "", isSold: 0, purchaseTime: ""))
+            database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, ticketPrice: raffle.price, customerName: "", isSold: 0, purchaseTime: ""))
         }
         
         // update UI
@@ -249,7 +249,7 @@ class SWHomeViewController: UITableViewController, SWAddEditTableViewControllerD
         let oldRaffle = raffles[currentRow]
         if oldRaffle.maximumNumber < raffle.maximumNumber {
             for index in (oldRaffle.maximumNumber + 1)...raffle.maximumNumber { // adding
-                database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, customerName: "", isSold: 0, purchaseTime: ""))
+                database.insert(ticket: SWTicket.init(raffleID: raffles.first!.ID, ticketNumber: index, ticketPrice: raffle.price, customerName: "", isSold: 0, purchaseTime: ""))
             }
         } else if oldRaffle.maximumNumber > raffle.maximumNumber{
             for index in (raffle.maximumNumber + 1)...oldRaffle.maximumNumber { // removing
