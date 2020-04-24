@@ -267,7 +267,7 @@ class SWAddEditTableViewController: UITableViewController, UITextFieldDelegate, 
 
         } else if indexPath.section == 6 {
             if indexPath.row == 0 {
-                print("Camera")
+                showAlert("Cooming soon.")
             } else if (indexPath.row == 1) {
                 let pickerCamera = UIImagePickerController()
                 
