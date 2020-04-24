@@ -594,6 +594,24 @@ class SQLiteDatabase
         return result
     }
     
+    func selectFrequentCustomers() -> [SWCustomer] {
+        var result = [SWCustomer]()
+        let selectStatementQuery = "SELECT name, purchaseTimes FROM Customer ORDER BY purchaseTimes"
+        
+        selectWithQuery(selectStatementQuery, eachRow: { (row) in
+            
+            //create a raffle object from each result
+            let customer = SWCustomer(
+                name: String(cString:sqlite3_column_text(row, 0)),
+                purchaseTimes: sqlite3_column_int(row, 1)
+                )
+            //add it to the result array
+            result.insert(customer, at: 0)
+        })
+        return result
+    }
+
+    
     func selectCustomerBy(name:String) -> SWCustomer? {
         var result : SWCustomer?
         let selectStatementQuery = "SELECT name, purchaseTimes FROM Customer WHERE name = ?"

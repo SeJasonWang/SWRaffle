@@ -13,7 +13,7 @@ class SWSellTableViewController: UITableViewController, UITextFieldDelegate {
     var raffle: SWRaffle!
     var customerName: String! = ""
     var amount: String! = ""
-    let customers = SQLiteDatabase(databaseName: "MyDatabase").selectAllCustomers()
+    let customers = SQLiteDatabase(databaseName: "MyDatabase").selectFrequentCustomers()
 
     override func viewDidLoad() {
         super.viewDidLoad()
