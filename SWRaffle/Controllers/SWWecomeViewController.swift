@@ -45,9 +45,9 @@ class SWWecomeViewController: UIViewController {
 
         titleLabel.text = "Welcome to Your Raffles"
         titleLabel1.text = "Control Your Raffles"
-        titleLabel2.text = "Sell and Share tickets"
-        subTitleLabel1.text = "My parents grew to like my girlfriend so much, they take her as their own daughter. Now they started looking for a proper boyfriend for her."
-        subTitleLabel2.text = "I got another letter from this lawyer today. It said “Final Notice”. Good that he will not bother me anymore. "
+        titleLabel2.text = "Sell and Share Tickets"
+        subTitleLabel1.text = "Here you can customize any number of your own raffles. The simple interface and smooth operation not only facilitate the management of your raffle, but also make you adore this app."
+        subTitleLabel2.text = "Click any part of any custom raffle wallpaper on the home page to enter the sell interface to sell your raffle ticket. Don’t forget! You can share the raffle tickets with the buyer via message after it’s sold."
         continueButton.setTitle("Continue", for: .normal)
         
         titleLabel.textAlignment = .center
@@ -91,10 +91,10 @@ class SWWecomeViewController: UIViewController {
 
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:|-80-[titleLabel]", options:[], metrics:nil, views:layoutViews))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel]-80-[titleLabel1]", options:[], metrics:nil, views:layoutViews))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel1]-0-[subTitleLabel1]", options:[], metrics:nil, views:layoutViews))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[subTitleLabel1]-20-[titleLabel2]", options:[], metrics:nil, views:layoutViews))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel2]-0-[subTitleLabel2]", options:[], metrics:nil, views:layoutViews))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel]-120-[titleLabel1]", options:[], metrics:nil, views:layoutViews))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel1]-2-[subTitleLabel1]", options:[], metrics:nil, views:layoutViews))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[subTitleLabel1]-40-[titleLabel2]", options:[], metrics:nil, views:layoutViews))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[titleLabel2]-2-[subTitleLabel2]", options:[], metrics:nil, views:layoutViews))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:"V:[continueButton(==50)]-60-|", options:[], metrics:nil, views:layoutViews))
 
     }
